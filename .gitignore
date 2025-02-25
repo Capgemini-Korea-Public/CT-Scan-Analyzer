@@ -90,3 +90,6 @@ crashlytics-build.properties
 /Assets/Resources/logmel_spectrogram.onnx.meta
 /Assets/Resources/vocab.json
 /Assets/Resources/vocab.json.meta
+
+# Ignore LLM Module
+/Assets/StreamingAssets
