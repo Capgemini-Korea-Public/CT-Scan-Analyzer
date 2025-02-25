@@ -23,7 +23,7 @@ namespace MyAudioPackage.Core
         /// <summary>
         /// FFmpeg 실행 파일의 상대 경로. 필요에 따라 수정할 수 있습니다.
         /// </summary>
-        public string FfmpegRelativePath { get; set; } = "Plugin/FFmpeg/bin/ffmpeg.exe";
+        public string FfmpegRelativePath { get; set; } = "Plugins/ffmpeg.exe";
 
         /// <summary>
         /// 생성자에서 폴더 경로와 FFmpeg 경로를 설정합니다.
