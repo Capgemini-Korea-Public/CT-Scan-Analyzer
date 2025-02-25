@@ -71,3 +71,22 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# Ignore Sentence-Similarity Module
+/Assets/Resources/HuggingFaceAPIConfig.asset
+/Assets/Resources/HuggingFaceAPIConfig.asset.meta
+
+# Ignore Speech-To-Text Module
+/Assets/Plugins/ffmpeg.exe
+/Assets/Plugins/ffmpeg.exe.meta
+
+/Assets/Resources/decoder_model.onnx
+/Assets/Resources/decoder_model.onnx.meta
+/Assets/Resources/decoder_with_past_model.onnx
+/Assets/Resources/decoder_with_past_model.onnx.meta
+/Assets/Resources/encoder_model.onnx
+/Assets/Resources/encoder_model.onnx.meta
+/Assets/Resources/logmel_spectrogram.onnx
+/Assets/Resources/logmel_spectrogram.onnx.meta
+/Assets/Resources/vocab.json
+/Assets/Resources/vocab.json.meta
