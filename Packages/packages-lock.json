@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "ai.undream.llm": {
+      "version": "https://github.com/undreamai/LLMUnity.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "3e7e0f9f8f38705af80546e5b1cf20140dfeda01"
+    },
     "com.huggingface.api": {
       "version": "https://github.com/huggingface/unity-api.git",
       "depth": 0,
