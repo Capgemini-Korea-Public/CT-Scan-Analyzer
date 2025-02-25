@@ -58,9 +58,9 @@ public class CameraControl : MonoBehaviour
     UnityCamera.transform.position = center - distance * UnityCamera.transform.forward;
     UnityCamera.transform.LookAt(center);
     // Adjust orthographic size
-    if (UnityCamera.orthographic)
-    {
-      UnityCamera.orthographicSize = 0.5f * (float)(bounds[3] - bounds[2]);
-    }
+    //if (UnityCamera.orthographic)
+    //{
+    //  UnityCamera.orthographicSize = 0.5f * (float)(bounds[3] - bounds[2]);
+    //}
   }
 }
