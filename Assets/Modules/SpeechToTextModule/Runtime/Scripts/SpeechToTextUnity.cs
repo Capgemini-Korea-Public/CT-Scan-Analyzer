@@ -87,10 +87,18 @@ namespace SpeechToTextUnity
 
         // 오디오 최대 사이즈 지정 (30초 at 16kHz)
         private const int maxSamples = 30 * 16000;
+        private static bool isFirst = true;
 
         public static async Task<string> SpeechToTextFromSentis(AudioClip audioClip)
         {
             if (isTranscribe) return null; // 중복 실행 방지
+
+            if (isFirst)
+            {
+                InitializeSentisModel();
+                isFirst = false;
+            }
+
             DisposeAll();
             isTranscribe = true;
 
@@ -142,6 +150,8 @@ namespace SpeechToTextUnity
                     logMelSpectro = Resources.Load<ModelAsset>("logmel_spectrogram");
                     vocab = Resources.Load<TextAsset>("vocab");
                 }
+                else
+                    return;
             }
             catch (Exception ex)
             {

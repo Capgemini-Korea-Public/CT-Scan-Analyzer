@@ -77,6 +77,8 @@ crashlytics-build.properties
 /Assets/Resources/HuggingFaceAPIConfig.asset.meta
 
 # Ignore Speech-To-Text Module
+/Assets/AudioProcessings
+/Assets/AudioProcessings.meta
 /Assets/Plugins/ffmpeg.exe
 /Assets/Plugins/ffmpeg.exe.meta
 
