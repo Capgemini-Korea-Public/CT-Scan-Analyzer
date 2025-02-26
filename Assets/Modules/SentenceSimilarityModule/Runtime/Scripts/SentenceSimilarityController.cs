@@ -34,6 +34,7 @@ public class SentenceSimilarityController : MonoBehaviour
 
     private bool isExecute;
     private SentenceSaveSystem saveSystem;
+    private CommandSystemManager commandSystemManager;
     // Set Singleton Object
     private void Awake()
     {
@@ -45,7 +46,8 @@ public class SentenceSimilarityController : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        
+
+        commandSystemManager = GetComponent<CommandSystemManager>();
         saveSystem = new SentenceSaveSystem();
         sentenceList = saveSystem.LoadSentences();
     }
@@ -76,10 +78,11 @@ public class SentenceSimilarityController : MonoBehaviour
     
     #region Events
 
-    public async void RegisterSentence(string input)
+    public async void RegisterSentence(string input, ICommand command)
     {
         if (maxSentenceCount > SentenceCount && !sentenceList.Contains(input))
         {
+            commandSystemManager.RegisterCommand(input, command);
             OnSentenceRegisterSuccessEvent?.Invoke(input);
             sentenceList.Add(input);
             await saveSystem.SaveSentencesAsync(sentenceList);
@@ -124,6 +127,7 @@ public class SentenceSimilarityController : MonoBehaviour
         Array.Sort(results, (a, b) => b.accuracy.CompareTo(a.accuracy));
 
         OnMeasureSuccessEvent?.Invoke(results);
+        
         isExecute = false;
     }
 #endregion
@@ -146,3 +150,4 @@ public struct SimilarityResult
     public string sentence;
     public float accuracy;
 }
+

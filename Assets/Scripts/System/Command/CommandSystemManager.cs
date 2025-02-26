@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class CommandSystemManager : MonoBehaviour
 {
     public static CommandSystemManager instance;
@@ -23,6 +24,8 @@ public class CommandSystemManager : MonoBehaviour
         {
             commandDict[key].Execute(parameters);
         }
+        
+       
     }
 }
 
