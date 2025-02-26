@@ -92,4 +92,4 @@ crashlytics-build.properties
 /Assets/Resources/vocab.json.meta
 
 # Ignore LLM Module
-/Assets/StreamingAssets
+/Assets/StreamingAssets/undreamai*
