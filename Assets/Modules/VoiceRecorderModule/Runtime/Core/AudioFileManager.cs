@@ -26,6 +26,11 @@ namespace MyAudioPackage.Core
         public string FfmpegRelativePath { get; set; } = "Plugins/ffmpeg.exe";
 
         /// <summary>
+        /// 현재 저장된 오디오 파일의 경로입니다. 
+        /// </summary>
+        public string CurRecordedFilePath { get; set; }
+
+        /// <summary>
         /// 생성자에서 폴더 경로와 FFmpeg 경로를 설정합니다.
         /// </summary>
         public AudioFileManager()
@@ -60,9 +65,9 @@ namespace MyAudioPackage.Core
 
             // 저장할 WAV 파일 경로를 설정합니다.
             string wavFilePath = Path.Combine(WavFolderPath, clip.name + ".wav");
+            CurRecordedFilePath = wavFilePath;
             // WavUtility는 기존에 작성한 WAV 변환 도우미 클래스입니다.
             WavUtility.SaveWavFile(trimmedClip, wavFilePath);
-            Debug.Log("WAV file saved: " + wavFilePath);
         }
 
         /// <summary>
@@ -82,6 +87,7 @@ namespace MyAudioPackage.Core
 
             // 변환할 OGG 파일 경로를 설정합니다.
             string oggFilePath = Path.Combine(WavFolderPath, clip.name + ".ogg");
+            CurRecordedFilePath = oggFilePath;
             // FFmpegConverter는 FFmpeg를 사용하여 파일 변환을 수행하는 도우미 클래스입니다.
             FFmpegConverter.ConvertWavToOgg(wavFilePath, oggFilePath, FfmpegPath);
 

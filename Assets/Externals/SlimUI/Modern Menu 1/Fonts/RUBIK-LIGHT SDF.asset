@@ -19,7 +19,7 @@ MonoBehaviour:
     m_StyleName: Light
     m_PointSize: 95
     m_Scale: 1
-    m_UnitsPerEM: 0
+    m_UnitsPerEM: 2816
     m_LineHeight: 112.575005
     m_AscentLine: 88.825005
     m_CapLine: 67
@@ -45092,6 +45092,7 @@ Material:
     - _BumpFace: 0
     - _BumpOutline: 0
     - _ColorMask: 15
+    - _CullMode: 0
     - _Diffuse: 0.5
     - _FaceDilate: 0
     - _FaceUVSpeedX: 0
@@ -45116,6 +45117,7 @@ Material:
     - _ScaleX: 1
     - _ScaleY: 1
     - _ShaderFlags: 0
+    - _Sharpness: 0
     - _SpecularPower: 2
     - _Stencil: 0
     - _StencilComp: 8
