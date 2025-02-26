@@ -1,3 +1,4 @@
+using SpeechToTextUnity;
 using System;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -28,6 +29,9 @@ namespace MyAudioPackage.Core
         // 내부적으로 사용할 마이크 장치
         private string selectedDevice = null;
         private string microphoneDevice = null;
+
+        // AudioFileManagerCore는 파일 저장 및 변환 기능을 담당하는 순수 C# 클래스입니다.
+        public AudioFileManager FileManager = new AudioFileManager();
 
         public AudioRecorder(AudioSource analysisSource, AudioSource playbackSource)
         {
@@ -116,6 +120,12 @@ namespace MyAudioPackage.Core
         /// </summary>
         public void StopRecording()
         {
+            // 분석용 AudioSource 정지
+            if (AnalysisSource != null && AnalysisSource.isPlaying)
+                AnalysisSource.Stop();
+            if (PlaybackSource != null)
+                PlaybackSource.Stop();
+
             if (!IsRecording)
             {
                 Log("Not currently recording.");
@@ -127,16 +137,11 @@ namespace MyAudioPackage.Core
             IsRecording = false;
             Log("Recording stopped.");
 
-            // 분석용 AudioSource 정지
-            if (AnalysisSource != null && AnalysisSource.isPlaying)
-                AnalysisSource.Stop();
-
             // 재생용 AudioSource에 녹음 클립 할당 후 재생 (있다면)
             if (PlaybackSource != null && RecordedClip != null)
             {
                 PlaybackSource.clip = RecordedClip;
                 PlaybackSource.loop = false;
-                PlaybackSource.Play();
             }
 
             OnRecordingStopped?.Invoke();
@@ -152,6 +157,12 @@ namespace MyAudioPackage.Core
         /// </summary>
         public void PlayRecording()
         {
+            if (IsRecording)
+            {
+                Log("Recording Progressing");
+                return;
+            }
+
             if (RecordedClip == null)
             {
                 Log("No recorded clip available for playback.");
@@ -160,6 +171,9 @@ namespace MyAudioPackage.Core
 
             if (PlaybackSource != null)
             {
+                if (PlaybackSource.isPlaying) 
+                    PlaybackSource.Stop(); 
+
                 PlaybackSource.clip = RecordedClip;
                 PlaybackSource.loop = false;
                 PlaybackSource.Play();
@@ -176,16 +190,13 @@ namespace MyAudioPackage.Core
         /// </summary>
         public void SaveRecording(SaveMode mode)
         {
-            // AudioFileManagerCore는 파일 저장 및 변환 기능을 담당하는 순수 C# 클래스입니다.
-            AudioFileManager fileManager = new AudioFileManager();
-
             switch (mode)
             {
                 case SaveMode.SaveWav:
-                    fileManager.SaveAsWav(RecordedClip, LastSample);
+                    FileManager.SaveAsWav(RecordedClip, LastSample);
                     break;
                 case SaveMode.SaveOgg:
-                    fileManager.SaveAsOgg(RecordedClip, LastSample);
+                    FileManager.SaveAsOgg(RecordedClip, LastSample);
                     break;
                 case SaveMode.None:
                 default:

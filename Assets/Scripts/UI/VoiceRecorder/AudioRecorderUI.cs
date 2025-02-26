@@ -6,12 +6,12 @@ using TMPro;
 public class AudioRecorderUI : MonoBehaviour
 {
     [Header("UI Elements")]
-    public Button startButton;
+    public Button recordButton;
     public Button stopButton;
     public Button playButton;
+    public Button durationEnterButton;
+    public Button sttEnterButton;
     public TMP_InputField durationInputField;
-    public TextMeshProUGUI logText;
-    public TextMeshProUGUI maxRecordingDurationText;
 
     public AudioSource analysisSource;
     public AudioSource playbackSource;
@@ -20,18 +20,24 @@ public class AudioRecorderUI : MonoBehaviour
     private AudioRecorder recorderCore;
     private AudioFileManager fileManagerCore;
 
+    private int duration;
+
     private void Awake()
     {
         recorderCore = new AudioRecorder(analysisSource, playbackSource);
         fileManagerCore = new AudioFileManager();
 
         // UI 버튼 이벤트 연결
-        if (startButton != null)
-            startButton.onClick.AddListener(OnStartButtonClicked);
+        if (recordButton != null)
+            recordButton.onClick.AddListener(OnStartButtonClicked);
         if (stopButton != null)
             stopButton.onClick.AddListener(OnStopButtonClicked);
         if (playButton != null)
             playButton.onClick.AddListener(OnPlayButtonClicked);
+        if (durationEnterButton != null)
+            durationEnterButton.onClick.AddListener(OnDurationEnterButtonClicked);
+        if (sttEnterButton != null)
+            sttEnterButton.onClick.AddListener(OnSTTEnterButtonClicked);
 
         // 입력 필드 변경 시 녹음 시간 업데이트
         if (durationInputField != null)
@@ -64,12 +70,21 @@ public class AudioRecorderUI : MonoBehaviour
         recorderCore.PlayRecording();
     }
 
+    private void OnDurationEnterButtonClicked()
+    {
+        recorderCore.SetRecordingDuration(duration);
+    }
+
+    private void OnSTTEnterButtonClicked()
+    {
+        MainController.Instance.SpeechToText(recorderCore.FileManager.CurRecordedFilePath);
+    }
+
     private void OnDurationInputChanged(string value)
     {
         if (int.TryParse(value, out int duration))
         {
-            recorderCore.SetRecordingDuration(duration);
-            maxRecordingDurationText.text = $"Max Recording Duration: {duration} seconds";
+           this.duration = duration;
         }
     }
 
@@ -87,9 +102,9 @@ public class AudioRecorderUI : MonoBehaviour
 
     private void AppendLog(string message)
     {
-        logText.text = "";
-        if (logText != null)
-            logText.text += message + "\n";
-        Debug.Log(message);
+        //logText.text = "";
+        //if (logText != null)
+        //    logText.text += message + "\n";
+        //Debug.Log(message);
     }
 }
