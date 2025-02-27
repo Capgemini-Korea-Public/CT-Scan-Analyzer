@@ -26,11 +26,35 @@ public class CameraRotationController : MonoBehaviour
 
     public VTKCamera vtkCamera;
 
+    // 초기 상태 저장용 변수
+    private float initialYaw;
+    private float initialPitch;
+    private float initialDistance;
+    private Vector3 initialPosition;
+    private Quaternion initialRotation;
+
+    // 누적 yaw와 pitch (단위: 도)
+    private float yaw = 0f;
+    private float pitch = 0f;
+
     private void Start()
     {
         vtkCamera = GetComponent<VTKCamera>();
         IntPtr renderWindowHandle = vtkCamera.GetRenderWindowHandle();
         SetTargetToVolumeCenter(renderWindowHandle);
+
+        // 초기 오프셋 계산하여 yaw, pitch, distance 초기화
+        Vector3 offset = transform.position - target.position;
+        initialDistance = offset.magnitude;
+        yaw = Mathf.Atan2(offset.x, offset.z) * Mathf.Rad2Deg;
+        pitch = Mathf.Asin(offset.y / initialDistance) * Mathf.Rad2Deg;
+        pitch = Mathf.Clamp(pitch, -80f, 80f);
+
+        // 초기 상태 저장
+        initialYaw = yaw;
+        initialPitch = pitch;
+        initialPosition = transform.position;
+        initialRotation = transform.rotation;
     }
 
     public void SetTargetToVolumeCenter(IntPtr renderWindowHandle)
@@ -214,6 +238,23 @@ public class CameraRotationController : MonoBehaviour
             StopCoroutine(continuousRotationCoroutine);
             continuousRotationCoroutine = null;
         }
+    }
+
+    /// <summary>
+    /// 회전 상태를 초기화(런타임 시작 시 저장한 상태로 복원)합니다.
+    /// </summary>
+    public void ResetRotationState()
+    {
+        StopContinuousRotation();
+        yaw = initialYaw;
+        pitch = initialPitch;
+        Vector3 offset = new Vector3(0, 0, -initialDistance);
+        // yaw 먼저, 그 다음 pitch
+        Quaternion qYaw = Quaternion.AngleAxis(yaw, Vector3.up);
+        Quaternion qPitch = Quaternion.AngleAxis(pitch, Vector3.right);
+        Quaternion rotation = qYaw * qPitch;
+        transform.position = target.position + rotation * offset;
+        transform.rotation = Quaternion.LookRotation(target.position - transform.position, Vector3.up);
     }
 }
 

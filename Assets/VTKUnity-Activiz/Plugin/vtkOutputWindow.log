@@ -1,32 +1,32 @@
 Warning: In vtkOpenGLRenderWindow.cxx, line 879
-vtkExternalOpenGLRenderWindow (0000022ECF37ED30): Failed to get red color buffer size (1280)
+vtkExternalOpenGLRenderWindow (0000022DC032B840): Failed to get red color buffer size (1280)
 
 
 Warning: In vtkOpenGLRenderWindow.cxx, line 889
-vtkExternalOpenGLRenderWindow (0000022ECF37ED30): Failed to get green color buffer size (1280)
+vtkExternalOpenGLRenderWindow (0000022DC032B840): Failed to get green color buffer size (1280)
 
 
 Warning: In vtkOpenGLRenderWindow.cxx, line 899
-vtkExternalOpenGLRenderWindow (0000022ECF37ED30): Failed to get blue color buffer size (1280)
+vtkExternalOpenGLRenderWindow (0000022DC032B840): Failed to get blue color buffer size (1280)
 
 
 Warning: In vtkOpenGLRenderWindow.cxx, line 909
-vtkExternalOpenGLRenderWindow (0000022ECF37ED30): Failed to get alpha color buffer size (1280)
+vtkExternalOpenGLRenderWindow (0000022DC032B840): Failed to get alpha color buffer size (1280)
 
 
 Warning: In vtkOpenGLRenderWindow.cxx, line 879
-vtkExternalOpenGLRenderWindow (0000022ECF381110): Failed to get red color buffer size (1280)
+vtkExternalOpenGLRenderWindow (0000022DC032C280): Failed to get red color buffer size (1280)
 
 
 Warning: In vtkOpenGLRenderWindow.cxx, line 889
-vtkExternalOpenGLRenderWindow (0000022ECF381110): Failed to get green color buffer size (1280)
+vtkExternalOpenGLRenderWindow (0000022DC032C280): Failed to get green color buffer size (1280)
 
 
 Warning: In vtkOpenGLRenderWindow.cxx, line 899
-vtkExternalOpenGLRenderWindow (0000022ECF381110): Failed to get blue color buffer size (1280)
+vtkExternalOpenGLRenderWindow (0000022DC032C280): Failed to get blue color buffer size (1280)
 
 
 Warning: In vtkOpenGLRenderWindow.cxx, line 909
-vtkExternalOpenGLRenderWindow (0000022ECF381110): Failed to get alpha color buffer size (1280)
+vtkExternalOpenGLRenderWindow (0000022DC032C280): Failed to get alpha color buffer size (1280)
 
 

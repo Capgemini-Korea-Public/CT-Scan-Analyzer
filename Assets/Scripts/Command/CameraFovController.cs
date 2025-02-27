@@ -10,12 +10,21 @@ public class CameraFovController : MonoBehaviour
     [Tooltip("FOV의 최대값 (예: 120도)")]
     public float maxFov = 120f;
 
+    // 초기 상태 저장용 변수
+    private float initialFov;
+    private Vector3 initialPosition;
+    private Quaternion initialRotation;
+
     void Start()
     {
         if (cam == null)
         {
             cam = GetComponent<Camera>();
         }
+
+        initialFov = cam.fieldOfView;
+        initialPosition = transform.position;
+        initialRotation = transform.rotation;
     }
 
     /// <summary>
@@ -55,5 +64,16 @@ public class CameraFovController : MonoBehaviour
         cam.fieldOfView = newFov;
 
         Debug.Log($"FOV 조정: {currentFov} -> {newFov} ({command}, {percent}%)");
+    }
+
+    /// <summary>
+    /// 카메라의 FOV와 위치, 회전을 초기 상태로 복원합니다.
+    /// </summary>
+    public void ResetFovState()
+    {
+        cam.fieldOfView = initialFov;
+        transform.position = initialPosition;
+        transform.rotation = initialRotation;
+        Debug.Log("카메라 FOV 및 상태가 초기화되었습니다.");
     }
 }

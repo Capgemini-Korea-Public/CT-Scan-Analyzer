@@ -4,6 +4,7 @@ public class TestCamera : MonoBehaviour
 {
     public CameraRotationController rotationController;
     public CameraFovController fovController;
+    public CameraOrthoZoomController orthoZoomController;
 
     void Update()
     {
@@ -38,6 +39,30 @@ public class TestCamera : MonoBehaviour
         {
             fovController.AdjustFov("zoom out"); // percent 매개변수를 생략하면 기본 10% 적용
         }
+
+        // C 키를 누르면 줌 인 (기본 10% 확대)
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            orthoZoomController.AdjustOrthoZoom("zoom in");
+        }
+
+        // V 키를 누르면 줌 아웃 (기본 10% 축소)
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            orthoZoomController.AdjustOrthoZoom("zoom out");
+        }
+
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            AllReset();
+        }
+    }
+
+    public void AllReset()
+    {
+        rotationController.ResetRotationState();
+        fovController.ResetFovState();
+        orthoZoomController.ResetCameraState();
     }
 }
 
