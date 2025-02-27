@@ -78,13 +78,13 @@ public class AudioRecorderUI : MonoBehaviour
 
     private void OnSTTEnterButtonClicked()
     {
-        SttToLLM();
+        _ = SttToLLM();
     }
 
     private async Task SttToLLM()
     {
         await MainController.Instance.SpeechToText(recorderCore.FileManager.CurRecordedFilePath);
-        MainController.Instance.LLM(MainController.Instance.STTConvertedString);
+        await MainController.Instance.LLM(MainController.Instance.STTConvertedString);
     }
 
     private void OnDurationInputChanged(string value)
