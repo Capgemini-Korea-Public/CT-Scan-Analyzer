@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using UnityEngine;
 
@@ -7,19 +7,22 @@ public class CameraRotationController : MonoBehaviour
 {
     public Transform target;
 
-    [Header("ÇÑ ¹ø È¸ÀüÇÒ ¶§ ¼³Á¤")]
-    [Tooltip("ÇÑ ¹ø ¸í·É ½Ã È¸ÀüÇÒ ±âº» °¢µµ (µµ)")]
+    [Header("í•œ ë²ˆ íšŒì „í•  ë•Œ ì„¤ì •")]
+    [Tooltip("í•œ ë²ˆ ëª…ë ¹ ì‹œ íšŒì „í•  ê¸°ë³¸ ê°ë„ (ë„)")]
     public float defaultAngle = 90f;
-    [Tooltip("´ÜÀÏ È¸Àü¿¡ °É¸®´Â ½Ã°£ (ÃÊ)")]
+    [Tooltip("ë‹¨ì¼ íšŒì „ì— ê±¸ë¦¬ëŠ” ì‹œê°„ (ì´ˆ)")]
     public float rotationDuration = 1f;
 
-    [Header("¿¬¼Ó È¸Àü ¼³Á¤")]
-    [Tooltip("¿¬¼Ó È¸Àü ½Ã ÃÊ´ç È¸Àü ¼Óµµ (µµ)")]
+    [Header("ì—°ì† íšŒì „ ì„¤ì •")]
+    [Tooltip("ì—°ì† íšŒì „ ì‹œ ì´ˆë‹¹ íšŒì „ ì†ë„ (ë„)")]
     public float continuousRotationSpeed = 30f;
 
-    // ³»ºÎ »óÅÂ ÇÃ·¡±×
+    // ë‚´ë¶€ ìƒíƒœ í”Œë˜ê·¸
     private bool isRotating = false;
     private Coroutine continuousRotationCoroutine;
+
+    // ì™¸ë¶€ì—ì„œ ì„¤ì •ë˜ëŠ” ì—°ì† íšŒì „ ëª…ë ¹ ("left", "right", "up", "down")
+    private string currentContinuousDirection = "";
 
     public VTKCamera vtkCamera;
 
@@ -27,25 +30,21 @@ public class CameraRotationController : MonoBehaviour
     {
         vtkCamera = GetComponent<VTKCamera>();
         IntPtr renderWindowHandle = vtkCamera.GetRenderWindowHandle();
-
         SetTargetToVolumeCenter(renderWindowHandle);
     }
 
     public void SetTargetToVolumeCenter(IntPtr renderWindowHandle)
     {
-        Vector3 origin = new Vector3(0, 0, 0);
+        Vector3 origin = Vector3.zero;
         Vector3 spacing = new Vector3(1, 1, 2);
         int xmin = 0, xmax = 255, ymin = 0, ymax = 255, zmin = 0, zmax = 93;
 
-        // ÀÎµ¦½º ±âÁØÀ¸·Î Áß°£°ª °è»ê ÈÄ, Spacing ¹İ¿µ
-        float centerX = origin.x + ((xmax - xmin) * 0.5f * spacing.x); // 0 + (255 * 0.5) = 127.5
+        // ì¸ë±ìŠ¤ ê¸°ì¤€ìœ¼ë¡œ ì¤‘ê°„ê°’ ê³„ì‚° í›„, Spacing ë°˜ì˜
+        float centerX = origin.x + ((xmax - xmin) * 0.5f * spacing.x); // 127.5
         float centerY = origin.y + ((ymax - ymin) * 0.5f * spacing.y); // 127.5
-        float centerZ = origin.z + ((zmax - zmin) * 0.5f * spacing.z); // 0 + (93 * 0.5 * 2) = 93
+        float centerZ = origin.z + ((zmax - zmin) * 0.5f * spacing.z); // 93
 
         Vector3 volumeCenter = new Vector3(centerX, centerY, centerZ);
-
-        // ÇÊ¿ä ½Ã ¿ÀÇÁ¼ÂÀ» Ãß°¡ÇØ ¸Ó¸®ÀÇ Á¤È®ÇÑ Áß½É¿¡ ¸ÂÃâ ¼ö ÀÖÀ½.
-        // ¿¹: volumeCenter.y -= offset;
 
         if (target != null)
         {
@@ -53,38 +52,36 @@ public class CameraRotationController : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("Å¸°ÙÀÌ ¼³Á¤µÇ¾î ÀÖÁö ¾Ê½À´Ï´Ù. ºó ¿ÀºêÁ§Æ®¸¦ »ı¼ºÇÏ¿© targetÀ¸·Î ÇÒ´çÇÏ¼¼¿ä.");
+            Debug.LogWarning("íƒ€ê²Ÿì´ ì„¤ì •ë˜ì–´ ìˆì§€ ì•ŠìŠµë‹ˆë‹¤. ë¹ˆ ì˜¤ë¸Œì íŠ¸ë¥¼ ìƒì„±í•˜ì—¬ targetìœ¼ë¡œ í• ë‹¹í•˜ì„¸ìš”.");
         }
     }
 
     /// <summary>
-    /// È¸Àü ¸í·ÉÀ» ½ÇÇàÇÕ´Ï´Ù.
-    /// - angle ¸Å°³º¯¼ö°¡ ÀÖÀ¸¸é ±× °¢µµ¸¸Å­ ºÎµå·´°Ô È¸ÀüÇÕ´Ï´Ù.
-    /// - angle ¸Å°³º¯¼ö°¡ ¾øÀ¸¸é ¿¬¼Ó È¸Àü ¸ğµå·Î µ¿ÀÛÇÕ´Ï´Ù.
+    /// íšŒì „ ëª…ë ¹ì„ ì‹¤í–‰í•©ë‹ˆë‹¤.
+    /// - angle ë§¤ê°œë³€ìˆ˜ê°€ ìˆìœ¼ë©´ ë‹¨ì¼ íšŒì „ ëª¨ë“œë¡œ, ì—†ìœ¼ë©´ ì—°ì† íšŒì „ ëª¨ë“œë¡œ ë™ì‘í•©ë‹ˆë‹¤.
     /// </summary>
     /// <param name="direction">"left", "right", "up", "down"</param>
-    /// <param name="angle">È¸ÀüÇÒ °¢µµ(µµ). nullÀÌ¸é ¿¬¼Ó È¸Àü</param>
+    /// <param name="angle">íšŒì „í•  ê°ë„(ë„). nullì´ë©´ ì—°ì† íšŒì „</param>
     public void RotateSmooth(string direction, float? angle = null)
     {
         if (!angle.HasValue)
         {
-            if (continuousRotationCoroutine == null)
-            {
-                continuousRotationCoroutine = StartCoroutine(ContinuousRotation(direction));
-            }
+            // ì—°ì† íšŒì „: ìƒˆ ë°©í–¥ ëª…ë ¹ì„ currentContinuousDirectionì— ì €ì¥
+            SetRotationCommand(direction);
         }
         else
         {
+            // ë‹¨ì¼ íšŒì „ ëª¨ë“œ: ì§„í–‰ ì¤‘ì¸ ì—°ì† íšŒì „ì´ ìˆë‹¤ë©´ ì¤‘ì§€
             if (continuousRotationCoroutine != null)
             {
                 StopCoroutine(continuousRotationCoroutine);
                 continuousRotationCoroutine = null;
+                currentContinuousDirection = "";
             }
             if (isRotating) return;
 
             float rotationAngle = angle.Value;
             Vector3 axis = Vector3.up;
-
             switch (direction.ToLower())
             {
                 case "left":
@@ -104,12 +101,13 @@ public class CameraRotationController : MonoBehaviour
                     rotationAngle = -Mathf.Abs(rotationAngle);
                     break;
                 default:
-                    Debug.LogWarning("¾Ë ¼ö ¾ø´Â È¸Àü ¸í·É: " + direction);
+                    Debug.LogWarning("ì•Œ ìˆ˜ ì—†ëŠ” íšŒì „ ëª…ë ¹: " + direction);
                     return;
             }
             StartCoroutine(RotateCoroutine(rotationAngle, axis));
         }
     }
+
     IEnumerator RotateCoroutine(float rotationAngle, Vector3 axis)
     {
         isRotating = true;
@@ -124,64 +122,93 @@ public class CameraRotationController : MonoBehaviour
             transform.rotation = Quaternion.Slerp(startRot, endRot, progress);
             if (target != null)
             {
-                transform.LookAt(target.position);
+                transform.LookAt(target.position, Vector3.up);
             }
             yield return null;
         }
         transform.rotation = endRot;
         if (target != null)
         {
-            transform.LookAt(target.position);
+            transform.LookAt(target.position, Vector3.up);
         }
         isRotating = false;
     }
 
-    IEnumerator ContinuousRotation(string direction)
+    IEnumerator ContinuousRotation()
     {
-        Vector3 axis = Vector3.up;
-        float sign = 1f;
-        switch (direction.ToLower())
-        {
-            case "left":
-                axis = Vector3.up;
-                sign = 1f;
-                break;
-            case "right":
-                axis = Vector3.up;
-                sign = -1f;
-                break;
-            case "up":
-                axis = transform.right;
-                sign = 1f;
-                break;
-            case "down":
-                axis = transform.right;
-                sign = -1f;
-                break;
-            default:
-                Debug.LogWarning("¾Ë ¼ö ¾ø´Â ¿¬¼Ó È¸Àü ¸í·É: " + direction);
-                yield break;
-        }
+        // ì´ˆê¸° ì˜¤í”„ì…‹ ê³„ì‚°
+        Vector3 offset = transform.position - target.position;
+        float r = offset.magnitude;
+        // Ï†: í´ë¼ ê°ë„, 0~Ï€ (0: target ë°”ë¡œ ìœ„, Ï€: target ë°”ë¡œ ì•„ë˜)
+        float phi = Mathf.Acos(offset.y / r);
+        // Î¸: ì•„ì§€ë¬´ìŠ¤ ê°ë„, XZ í‰ë©´ì—ì„œì˜ ê°ë„ (ê¸°ì¤€: Zì¶•)
+        float theta = Mathf.Atan2(offset.x, offset.z);
 
         while (true)
         {
-            float angleThisFrame = continuousRotationSpeed * Time.deltaTime * sign;
-            Quaternion deltaRotation = Quaternion.AngleAxis(angleThisFrame, axis);
+            // ë§Œì•½ ìƒˆ ë°©í–¥ ëª…ë ¹ì´ ë“¤ì–´ì˜¤ë©´ currentContinuousDirectionê°€ ì—…ë°ì´íŠ¸ë˜ì–´ ë°˜ì˜ë©ë‹ˆë‹¤.
+            switch (currentContinuousDirection)
+            {
+                case "left":
+                    theta += continuousRotationSpeed * Time.deltaTime * Mathf.Deg2Rad;
+                    break;
+                case "right":
+                    theta -= continuousRotationSpeed * Time.deltaTime * Mathf.Deg2Rad;
+                    break;
+                case "up":
+                    phi -= continuousRotationSpeed * Time.deltaTime * Mathf.Deg2Rad;
+                    break;
+                case "down":
+                    phi += continuousRotationSpeed * Time.deltaTime * Mathf.Deg2Rad;
+                    break;
+                default:
+                    break;
+            }
 
-            // Å¸°Ù°úÀÇ »ó´ë À§Ä¡(¿ÀÇÁ¼Â)¸¦ ±¸ÇÑ ÈÄ È¸Àü
-            Vector3 offset = transform.position - target.position;
-            offset = deltaRotation * offset;
-            transform.position = target.position + offset;
+            // í´ë¨í•‘: Ï†ë¥¼ 10Â° ~ 170Â° (ë¼ë””ì•ˆ: 10Â°â‰ˆ0.175, 170Â°â‰ˆ2.967)
+            float minPhi = 10f * Mathf.Deg2Rad;
+            float maxPhi = 170f * Mathf.Deg2Rad;
+            phi = Mathf.Clamp(phi, minPhi, maxPhi);
 
-            // Ä«¸Ş¶óÀÇ up º¤ÅÍ°¡ ±Ş°İÈ÷ ¹Ù²îÁö ¾Êµµ·Ï, LookAt È£Ãâ ½Ã ¿ùµå up (Vector3.up) °íÁ¤
-            transform.rotation = Quaternion.LookRotation(target.position - transform.position, Vector3.up);
+            // Î¸ëŠ” 0~2Ï€ë¡œ ë°˜ë³µ
+            theta = Mathf.Repeat(theta, 2 * Mathf.PI);
+
+            // êµ¬ë©´ ì¢Œí‘œ -> ë°ì¹´ë¥´íŠ¸ ì¢Œí‘œ ë³€í™˜
+            float sinPhi = Mathf.Sin(phi);
+            float cosPhi = Mathf.Cos(phi);
+            float sinTheta = Mathf.Sin(theta);
+            float cosTheta = Mathf.Cos(theta);
+
+            Vector3 newOffset = new Vector3(
+                r * sinPhi * sinTheta, // x
+                r * cosPhi,            // y
+                r * sinPhi * cosTheta  // z
+            );
+
+            transform.position = target.position + newOffset;
+            transform.LookAt(target.position, Vector3.up);
 
             yield return null;
         }
     }
 
+    /// <summary>
+    /// ì™¸ë¶€ì—ì„œ ì—°ì† íšŒì „ ëª…ë ¹ì„ ì„¤ì •í•©ë‹ˆë‹¤.
+    /// ë§Œì•½ ì´ë¯¸ ì—°ì† íšŒì „ ì¤‘ì´ë©´, ìƒˆ ëª…ë ¹ìœ¼ë¡œ ë°”ë¡œ ì „í™˜ë©ë‹ˆë‹¤.
+    /// </summary>
+    /// <param name="command">"left", "right", "up", "down"</param>
+    public void SetRotationCommand(string command)
+    {
+        currentContinuousDirection = command.ToLower();
+        if (continuousRotationCoroutine == null)
+        {
+            continuousRotationCoroutine = StartCoroutine(ContinuousRotation());
+        }
+    }
+
     public void StopContinuousRotation()
     {
+        currentContinuousDirection = "";
         if (continuousRotationCoroutine != null)
         {
             StopCoroutine(continuousRotationCoroutine);
@@ -189,4 +216,6 @@ public class CameraRotationController : MonoBehaviour
         }
     }
 }
+
+
 
