@@ -328,6 +328,29 @@ using System.Collections.Generic;
             }
         }
 
+        public static async Task<Texture2D> LoadTexture(string filePath)
+        {
+            string loadedFilePath = "file://" + filePath;
+
+            using (UnityWebRequest www = UnityWebRequestTexture.GetTexture(loadedFilePath))
+            {
+                await www.SendWebRequest();
+
+                if (www.result == UnityWebRequest.Result.Success)
+                {
+                    UnityEngine.Debug.Log("Successfully Loaded Texture");
+                    Texture2D texture = DownloadHandlerTexture.GetContent(www);
+                    texture.name = Path.GetFileName(filePath); 
+                    return texture;
+                }
+                else
+                {
+                    UnityEngine.Debug.LogWarning("Failed to Load Texture: " + www.error);
+                    return null;
+                }
+            }
+        }
+
         private static AudioType GetAudioType(string extension)
         {
             switch (extension)
