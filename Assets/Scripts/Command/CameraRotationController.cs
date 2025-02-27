@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(VTKCamera))]
@@ -6,80 +7,186 @@ public class CameraRotationController : MonoBehaviour
 {
     public Transform target;
 
-    public float rotationAngle = 15f;
+    [Header("한 번 회전할 때 설정")]
+    [Tooltip("한 번 명령 시 회전할 기본 각도 (도)")]
+    public float defaultAngle = 90f;
+    [Tooltip("단일 회전에 걸리는 시간 (초)")]
+    public float rotationDuration = 1f;
 
-    private VTKCamera vtkCam;
+    [Header("연속 회전 설정")]
+    [Tooltip("연속 회전 시 초당 회전 속도 (도)")]
+    public float continuousRotationSpeed = 30f;
+
+    // 내부 상태 플래그
+    private bool isRotating = false;
+    private Coroutine continuousRotationCoroutine;
+
+    public VTKCamera vtkCamera;
 
     private void Start()
     {
-        vtkCam = GetComponent<VTKCamera>();
-        if(vtkCam == null)
-        {
-            Debug.LogWarning("CameraRotationController: VTKCamera가 없습니다.");
-            return;
-        }
+        vtkCamera = GetComponent<VTKCamera>();
+        IntPtr renderWindowHandle = vtkCamera.GetRenderWindowHandle();
 
-        if (target == null)
-        {
-            GameObject pivot = new GameObject("VolumeCenterPivot");
-            target = pivot.transform;
-        }
-
-        // 씬의 VTK 오브젝트(볼륨 등)가 모두 초기화된 뒤에 호출되어야
-        // 올바른 SceneBounds를 가져올 수 있습니다.
-        SetTargetToVolumeCenter();
+        SetTargetToVolumeCenter(renderWindowHandle);
     }
 
-    private void SetTargetToVolumeCenter()
+    public void SetTargetToVolumeCenter(IntPtr renderWindowHandle)
     {
-        IntPtr renderWindowHandle = vtkCam.GetRenderWindowHandle();
-        if(renderWindowHandle == IntPtr.Zero)
+        Vector3 origin = new Vector3(0, 0, 0);
+        Vector3 spacing = new Vector3(1, 1, 2);
+        int xmin = 0, xmax = 255, ymin = 0, ymax = 255, zmin = 0, zmax = 93;
+
+        // 인덱스 기준으로 중간값 계산 후, Spacing 반영
+        float centerX = origin.x + ((xmax - xmin) * 0.5f * spacing.x); // 0 + (255 * 0.5) = 127.5
+        float centerY = origin.y + ((ymax - ymin) * 0.5f * spacing.y); // 127.5
+        float centerZ = origin.z + ((zmax - zmin) * 0.5f * spacing.z); // 0 + (93 * 0.5 * 2) = 93
+
+        Vector3 volumeCenter = new Vector3(centerX, centerY, centerZ);
+
+        // 필요 시 오프셋을 추가해 머리의 정확한 중심에 맞출 수 있음.
+        // 예: volumeCenter.y -= offset;
+
+        if (target != null)
         {
-            Debug.LogWarning("렌더 윈도우 핸들을 가져오지 못했습니다.");
-            return;
+            target.position = volumeCenter;
         }
-
-        double[] bounds = new double[6];
-        VTKUnityNativePluginLiteScene.GetSceneBounds(renderWindowHandle, ref bounds);
-
-        // bounds[0,1,2,3,4,5] = xmin, xmax, ymin, ymax, zmin, zmax
-        float xCenter = 0.5f * (float)(bounds[0] + bounds[1]);
-        float yCenter = 0.5f * (float)(bounds[2] + bounds[3]);
-        float zCenter = 0.5f * (float)(bounds[4] + bounds[5]);
-
-        Vector3 volumeCenter = new Vector3(xCenter, yCenter, zCenter);
-
-        target.position = volumeCenter;
+        else
+        {
+            Debug.LogWarning("타겟이 설정되어 있지 않습니다. 빈 오브젝트를 생성하여 target으로 할당하세요.");
+        }
     }
 
-    public void RotateByCommand(string direction)
+    /// <summary>
+    /// 회전 명령을 실행합니다.
+    /// - angle 매개변수가 있으면 그 각도만큼 부드럽게 회전합니다.
+    /// - angle 매개변수가 없으면 연속 회전 모드로 동작합니다.
+    /// </summary>
+    /// <param name="direction">"left", "right", "up", "down"</param>
+    /// <param name="angle">회전할 각도(도). null이면 연속 회전</param>
+    public void RotateSmooth(string direction, float? angle = null)
     {
-        if (target == null)
+        if (!angle.HasValue)
         {
-            Debug.LogWarning("CameraRotationController: 타겟이 설정되지 않았습니다.");
-            return;
+            if (continuousRotationCoroutine == null)
+            {
+                continuousRotationCoroutine = StartCoroutine(ContinuousRotation(direction));
+            }
         }
+        else
+        {
+            if (continuousRotationCoroutine != null)
+            {
+                StopCoroutine(continuousRotationCoroutine);
+                continuousRotationCoroutine = null;
+            }
+            if (isRotating) return;
 
+            float rotationAngle = angle.Value;
+            Vector3 axis = Vector3.up;
+
+            switch (direction.ToLower())
+            {
+                case "left":
+                    axis = Vector3.up;
+                    rotationAngle = Mathf.Abs(rotationAngle);
+                    break;
+                case "right":
+                    axis = Vector3.up;
+                    rotationAngle = -Mathf.Abs(rotationAngle);
+                    break;
+                case "up":
+                    axis = transform.right;
+                    rotationAngle = Mathf.Abs(rotationAngle);
+                    break;
+                case "down":
+                    axis = transform.right;
+                    rotationAngle = -Mathf.Abs(rotationAngle);
+                    break;
+                default:
+                    Debug.LogWarning("알 수 없는 회전 명령: " + direction);
+                    return;
+            }
+            StartCoroutine(RotateCoroutine(rotationAngle, axis));
+        }
+    }
+    IEnumerator RotateCoroutine(float rotationAngle, Vector3 axis)
+    {
+        isRotating = true;
+        Quaternion startRot = transform.rotation;
+        Quaternion endRot = Quaternion.AngleAxis(rotationAngle, axis) * startRot;
+
+        float t = 0f;
+        while (t < rotationDuration)
+        {
+            t += Time.deltaTime;
+            float progress = t / rotationDuration;
+            transform.rotation = Quaternion.Slerp(startRot, endRot, progress);
+            if (target != null)
+            {
+                transform.LookAt(target.position);
+            }
+            yield return null;
+        }
+        transform.rotation = endRot;
+        if (target != null)
+        {
+            transform.LookAt(target.position);
+        }
+        isRotating = false;
+    }
+
+    IEnumerator ContinuousRotation(string direction)
+    {
+        Vector3 axis = Vector3.up;
+        float sign = 1f;
         switch (direction.ToLower())
         {
             case "left":
-                transform.RotateAround(target.position, Vector3.up, rotationAngle);
+                axis = Vector3.up;
+                sign = 1f;
                 break;
             case "right":
-                transform.RotateAround(target.position, Vector3.up, -rotationAngle);
+                axis = Vector3.up;
+                sign = -1f;
                 break;
             case "up":
-                transform.RotateAround(target.position, transform.right, rotationAngle);
+                axis = transform.right;
+                sign = 1f;
                 break;
             case "down":
-                transform.RotateAround(target.position, transform.right, -rotationAngle);
+                axis = transform.right;
+                sign = -1f;
                 break;
             default:
-                Debug.LogWarning($"알 수 없는 명령어: {direction}");
-                return;
+                Debug.LogWarning("알 수 없는 연속 회전 명령: " + direction);
+                yield break;
         }
 
-        // 회전 후 타겟을 바라보도록
-        transform.LookAt(target.position);
+        while (true)
+        {
+            float angleThisFrame = continuousRotationSpeed * Time.deltaTime * sign;
+            Quaternion deltaRotation = Quaternion.AngleAxis(angleThisFrame, axis);
+
+            // 타겟과의 상대 위치(오프셋)를 구한 후 회전
+            Vector3 offset = transform.position - target.position;
+            offset = deltaRotation * offset;
+            transform.position = target.position + offset;
+
+            // 카메라의 up 벡터가 급격히 바뀌지 않도록, LookAt 호출 시 월드 up (Vector3.up) 고정
+            transform.rotation = Quaternion.LookRotation(target.position - transform.position, Vector3.up);
+
+            yield return null;
+        }
+    }
+
+    public void StopContinuousRotation()
+    {
+        if (continuousRotationCoroutine != null)
+        {
+            StopCoroutine(continuousRotationCoroutine);
+            continuousRotationCoroutine = null;
+        }
     }
 }
+

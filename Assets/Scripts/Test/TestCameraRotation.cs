@@ -11,19 +11,19 @@ public class TestCameraRotation : MonoBehaviour
         // 방향키 입력 시 테스트
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            rotationController.RotateByCommand("left");
+            rotationController.RotateSmooth("left");
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-            rotationController.RotateByCommand("right");
+            rotationController.RotateSmooth("right");
         }
         else if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            rotationController.RotateByCommand("up");
+            rotationController.RotateSmooth("up");
         }
         else if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            rotationController.RotateByCommand("down");
+            rotationController.RotateSmooth("down");
         }
     }
 }
