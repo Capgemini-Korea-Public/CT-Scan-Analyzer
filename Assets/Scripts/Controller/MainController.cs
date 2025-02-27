@@ -13,7 +13,10 @@ public class MainController : MonoBehaviour
 
     [Header("Speech To Text Elements")]
     [Range(0,30)] public int MaxAudioDuration = 25;
-    public string ConvertedString;
+    public string STTConvertedString;
+
+    [Header("LLM Elements")]
+    public string LLMOutputString;
 
     private static MainController instance;
     public static MainController Instance => instance;
@@ -29,9 +32,18 @@ public class MainController : MonoBehaviour
             Destroy(gameObject);
         }
     }
+    private void OnDestroy()
+    {
+        SpeechToTextUnityModule.OnDestroy();
+    }
 
     public async Task SpeechToText(string filePath)
     {
-        ConvertedString = await AudioConvertor.ConvertAudioToText(filePath, STTModelType, MaxAudioDuration);
+        STTConvertedString = await AudioConvertor.ConvertAudioToText(filePath, STTModelType, MaxAudioDuration);
+    }
+
+    public async Task LLM(string inputText)
+    {
+        LLMOutputString = await LLMModule.Instance.Chat(inputText);
     }
 }
