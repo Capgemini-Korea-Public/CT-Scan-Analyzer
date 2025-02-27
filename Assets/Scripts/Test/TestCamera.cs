@@ -1,8 +1,9 @@
 using UnityEngine;
 
-public class TestCameraRotation : MonoBehaviour
+public class TestCamera : MonoBehaviour
 {
     public CameraRotationController rotationController;
+    public CameraFovController fovController;
 
     void Update()
     {
@@ -24,6 +25,18 @@ public class TestCameraRotation : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.DownArrow))
         {
             rotationController.RotateSmooth("down");
+        }
+
+        // Z 키를 누르면 줌 인 (기본 10% 확대)
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            fovController.AdjustFov("zoom in");  // percent 매개변수를 생략하면 기본 10% 적용
+        }
+
+        // X 키를 누르면 줌 아웃 (기본 10% 축소)
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            fovController.AdjustFov("zoom out"); // percent 매개변수를 생략하면 기본 10% 적용
         }
     }
 }
