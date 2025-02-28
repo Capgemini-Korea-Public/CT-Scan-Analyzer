@@ -124,6 +124,11 @@ public class CameraRotationController : MonoBehaviour
                     axis = transform.right;
                     rotationAngle = -Mathf.Abs(rotationAngle);
                     break;
+                case "none":
+                    axis = transform.right;
+                    rotationAngle = -Mathf.Abs(rotationAngle);
+                    Debug.LogWarning("사방 외 방향 명령으로 기본 값 적용");
+                    break;
                 default:
                     Debug.LogWarning("알 수 없는 회전 명령: " + direction);
                     return;
