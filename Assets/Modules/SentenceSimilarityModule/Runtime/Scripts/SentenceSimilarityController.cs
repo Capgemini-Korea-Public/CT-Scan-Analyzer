@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 using SentenceSimilarityUnity;
 using UnityEngine;
 using UnityEngine.Events;
@@ -81,7 +79,6 @@ public class SentenceSimilarityController : MonoBehaviour
         var rakeResults = rakeAlgorithm.Run(positiveSentence);
         foreach (var rakeResult in rakeResults)
         {
-            Debug.Log($"result: {rakeResult.Key} => {rakeResult.Value}");
             var processedKey = StringUtility.NormalizeText(rakeResult.Key);
             var findSentences = sentenceList.FindAll(s => StringUtility.NormalizeText(s).Contains(processedKey));
             foreach (var sentence in findSentences)
@@ -149,8 +146,6 @@ public class SentenceSimilarityController : MonoBehaviour
 
     private void MeasureSuccess(float[] accuracy)
     {
-        Debug.Log("Sentences Detected");
-
         SimilarityResult[] results = new SimilarityResult[accuracy.Length];
 
         // 가중치와 유사도를 조합한 최종 점수 계산을 위한 변수들
