@@ -38,7 +38,7 @@ public class LLMModule : MonoBehaviour
 
     private void Start()
     {
-        apiType = MainController.Instance.LLMModelType;
+        //apiType = MainController.Instance.LLMModelType;
         switch(apiType)
         {
             // 차후 custom editor를 활용하여 native를 골랐을 때만 component를 추가하는 것으로 수정
@@ -69,6 +69,11 @@ public class LLMModule : MonoBehaviour
     {
         Debug.Log($"{llmService.GetType().Name} start");
         return await llmService.Chat(inputText, inputImage);
+    }
+    public async Task<string> Chat(string inputText, Texture2D[] inputImages)
+    {
+        Debug.Log($"{llmService.GetType().Name} start");
+        return await llmService.Chat(inputText, inputImages);
     }
 }
 
