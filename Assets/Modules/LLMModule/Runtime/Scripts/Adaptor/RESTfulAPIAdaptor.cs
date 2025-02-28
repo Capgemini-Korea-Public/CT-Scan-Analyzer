@@ -164,6 +164,7 @@ public class RESTfulAPIAdaptor : ILLMService
         // image Read/Write = true
         // Comprerssion = none 설정
         //TextureConverter.ConvertTexture(inputImage);
+        Debug.Log($"{inputImages.Length}");
         string[] base64Images = Ollama.EncodeTextures(inputImages);
 
         // 메시지 구성
@@ -179,7 +180,7 @@ public class RESTfulAPIAdaptor : ILLMService
                 }
             }
         };
-
+        Debug.Log("message role on");
         foreach (string image in base64Images)
         {
             ((List<Dictionary<string, object>>)messages[messages.Count - 1]["content"]).Add(
@@ -193,11 +194,11 @@ public class RESTfulAPIAdaptor : ILLMService
 
         // 전체 요청 본문
         var requestObj = new Dictionary<string, object>
-    {
-        { "model", "gpt-4o-mini" },
-        { "messages", messages },
-        { "max_tokens", 300 }
-    };
+        {
+            { "model", "gpt-4o-mini" },
+            { "messages", messages },
+            { "max_tokens", 300 }
+        };
 
         // JSON 직렬화
         string jsonRequest = JsonConvert.SerializeObject(requestObj);
