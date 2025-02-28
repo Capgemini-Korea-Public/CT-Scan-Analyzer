@@ -90,22 +90,106 @@ public class RESTfulAPIAdaptor : ILLMService
 
         // 메시지 구성
         var messages = new List<Dictionary<string, object>>
-    {
-        new Dictionary<string, object>
         {
-            { "role", "user" },
-            { "content", new List<Dictionary<string, object>>
-                {
-                    new Dictionary<string, object> { { "type", "text" }, { "text", inputText } },
-                    new Dictionary<string, object>
+            new Dictionary<string, object>
+            {
+                { "role", "user" },
+                { "content", new List<Dictionary<string, object>>
                     {
-                        { "type", "image_url" },
-                        { "image_url", new Dictionary<string, string> { { "url", $"data:image/jpeg;base64,{base64Image}" } } }
+                        new Dictionary<string, object> { { "type", "text" }, { "text", inputText } },
+                        new Dictionary<string, object>
+                        {
+                            { "type", "image_url" },
+                            { "image_url", new Dictionary<string, string> { { "url", $"data:image/jpeg;base64,{base64Image}" } } }
+                        }
                     }
                 }
             }
+        };
+
+        // 전체 요청 본문
+        var requestObj = new Dictionary<string, object>
+        {
+            { "model", "gpt-4o-mini" },
+            { "messages", messages },
+            { "max_tokens", 300 }
+        };
+
+        // JSON 직렬화
+        string jsonRequest = JsonConvert.SerializeObject(requestObj);
+
+        // 디버깅용 (요청 본문 시작 부분만 로깅)
+        Debug.Log("Request JSON (first 500 chars): " + jsonRequest.Substring(0, Math.Min(500, jsonRequest.Length)) + "...");
+
+        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonRequest);
+
+        // API 요청
+        using (UnityWebRequest request = new UnityWebRequest("https://api.openai.com/v1/chat/completions", "POST"))
+        {
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.SetRequestHeader("Authorization", $"Bearer {authData.api_key}");
+
+            // 요청 전송
+            await request.SendWebRequest();
+
+            // 응답 확인
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                string responseJson = request.downloadHandler.text;
+                Debug.Log("Response: " + responseJson);
+
+                // JSON 응답 파싱
+                var responseObj = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseJson);
+                var choices = (responseObj["choices"] as Newtonsoft.Json.Linq.JArray);
+                var message = (choices[0] as Newtonsoft.Json.Linq.JObject)["message"];
+                string content = (string)((message as Newtonsoft.Json.Linq.JObject)["content"]);
+
+                return content;
+            }
+            else
+            {
+                Debug.LogError($"API 요청 실패: {request.error}");
+                Debug.LogError($"응답 코드: {request.responseCode}");
+                Debug.LogError($"응답 내용: {request.downloadHandler?.text}");
+                return $"오류 발생: {request.error}\n{request.downloadHandler?.text}";
+            }
         }
-    };
+    }
+
+    public async Task<string> Chat(string inputText, Texture2D[] inputImages)
+    {
+        // apikey ignore에 추가
+        // image Read/Write = true
+        // Comprerssion = none 설정
+        //TextureConverter.ConvertTexture(inputImage);
+        string[] base64Images = Ollama.EncodeTextures(inputImages);
+
+        // 메시지 구성
+        var messages = new List<Dictionary<string, object>>
+        {
+            new Dictionary<string, object>
+            {
+                { "role", "user" },
+                { "content", new List<Dictionary<string, object>>
+                    {
+                        new Dictionary<string, object> { { "type", "text" }, { "text", inputText } }
+                    }
+                }
+            }
+        };
+
+        foreach (string image in base64Images)
+        {
+            ((List<Dictionary<string, object>>)messages[messages.Count - 1]["content"]).Add(
+                new Dictionary<string, object>
+                {
+                    { "type", "image_url" },
+                    { "image_url", new Dictionary<string, string> { { "url", $"data:image/jpeg;base64,{image}" } } }
+                }
+            );
+        }
 
         // 전체 요청 본문
         var requestObj = new Dictionary<string, object>
