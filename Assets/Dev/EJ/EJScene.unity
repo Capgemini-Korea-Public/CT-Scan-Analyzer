@@ -443,6 +443,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: MainController
       objectReference: {fileID: 0}
+    - target: {fileID: 7994321896975326587, guid: 3ff64638c27625841926eeaa59bb4394,
+        type: 3}
+      propertyPath: CurSelectedImageFile.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7994321896975326587, guid: 3ff64638c27625841926eeaa59bb4394,
+        type: 3}
+      propertyPath: 'CurSelectedImageFile.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2800000, guid: 78a59ca99f8987941adb61f9e14a06a7, type: 3}
+    - target: {fileID: 7994321896975326587, guid: 3ff64638c27625841926eeaa59bb4394,
+        type: 3}
+      propertyPath: 'CurSelectedImageFile.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2800000, guid: 373b2985ce5bf2d4e9087e510d761960, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -18,20 +18,6 @@ namespace SpeechToTextUnity
                 return null;
             }
         }
-
-        //public static string[] FileSelectMultiple()
-        //{
-        //    string[] filePaths = EditorUtility.OpenFilePanelWithFilters("Select Files", "", new string[] { "All Files", "*.*" });
-        //    if (filePaths.Length > 0)
-        //    {
-        //        return filePaths;
-        //    }
-        //    else
-        //    {
-        //        Debug.LogWarning("Invalid File Paths");
-        //        return null;
-        //    }
-        //}
     }
 }
 

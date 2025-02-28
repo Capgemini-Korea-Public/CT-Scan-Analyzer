@@ -18,7 +18,7 @@ public class MainController : MonoBehaviour
     public ActivateType SentenceSimilarityModelType;
 
     [Header("Elements")]
-    public Texture2D CurSelectedImageFile;
+    public Texture2D[] CurSelectedImageFile;
 
     private static MainController instance;
     public static MainController Instance => instance;
@@ -54,10 +54,10 @@ public class MainController : MonoBehaviour
     /// </summary>
     public async Task LLM(string inputText)
     {
-        if (CurSelectedImageFile == null)
-            LLMOutputString = await LLMModule.Instance.Chat(inputText);
-        else
-            LLMOutputString = await LLMModule.Instance.Chat(inputText, CurSelectedImageFile);
+        //if (CurSelectedImageFile == null)
+        //    LLMOutputString = await LLMModule.Instance.Chat(inputText);
+        //else
+        LLMOutputString = await LLMModule.Instance.Chat(inputText, CurSelectedImageFile);
 
         if (!string.IsNullOrEmpty(LLMOutputString))
             OnLLMResponseUpdated?.Invoke(LLMOutputString);
