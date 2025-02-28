@@ -2,7 +2,6 @@
 using System.Collections;
 using UnityEngine;
 
-[RequireComponent(typeof(VTKCamera))]
 public class CameraRotationController : MonoBehaviour
 {
     public Transform target;
