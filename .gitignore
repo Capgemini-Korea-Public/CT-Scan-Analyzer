@@ -96,3 +96,4 @@ crashlytics-build.properties
 # Ignore LLM Module
 /Assets/StreamingAssets/undreamai*
 /Assets/VTKUnity-Activiz/Plugin/vtkOutputWindow.log
+/Assets/VTKUnity-Activiz/Plugin/vtkOutputWindow.txt
