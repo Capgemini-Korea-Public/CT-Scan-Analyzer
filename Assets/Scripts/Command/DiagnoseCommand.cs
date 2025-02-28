@@ -3,7 +3,7 @@ using UnityEngine;
 public class DiagnoseCommand : ICommand
 {
     private const string CommandName = "Diagnose";
-    private const string MessageFormat = "\nI need you to diagnose my condition \n";
+    private const string MessageFormat = "\nPlease look at the attached picture and determine what the picture looks like \n";
 
     public DiagnoseCommand()
     {
