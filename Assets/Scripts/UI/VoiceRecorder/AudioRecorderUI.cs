@@ -79,6 +79,7 @@ public class AudioRecorderUI : MonoBehaviour
     private void OnSTTEnterButtonClicked()
     {
         _ = SttToLLM();
+        MainController.Instance.ResetSelectedImage();
     }
 
     private async Task SttToLLM()

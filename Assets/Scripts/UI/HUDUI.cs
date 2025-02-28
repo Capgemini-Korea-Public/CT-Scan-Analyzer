@@ -11,8 +11,6 @@ public class HUDUI : MonoBehaviour
 {
     [Header("Image Input")]
     [SerializeField] private Button imageSelectButton;
-    [SerializeField] private string curSelectedImagePath;
-    [SerializeField] private Texture2D imageFile;
 
     [Header("Text Input")]
     [SerializeField] private GameObject textInput;
@@ -27,6 +25,7 @@ public class HUDUI : MonoBehaviour
 
     [Header("Output Panel")]
     [SerializeField] private GameObject outputPanel;
+    [SerializeField] private TextMeshProUGUI outputText;
     [SerializeField] private TextMeshProUGUI warningText;
 
     private readonly HashSet<string> imageExtensions = new HashSet<string> { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
@@ -47,6 +46,8 @@ public class HUDUI : MonoBehaviour
         if (textInputField != null)
             textInputField.onValueChanged.AddListener(OnTextInputValChanged);
 
+        MainController.Instance.OnLLMResponseUpdated  += OnOutputChanged;
+
         // Init With Audio Input Mode
         ToggleInputMode(false);
     }
@@ -59,6 +60,7 @@ public class HUDUI : MonoBehaviour
     private void OnClickTextInputEnterBtn()
     {
         _ = RunLLM();
+        MainController.Instance.ResetSelectedImage();
     }
 
     private void OnTextInputValChanged(string value)
@@ -76,8 +78,7 @@ public class HUDUI : MonoBehaviour
         string filePath = FileSelector.FileSelect();
         if (IsValidImageFormat(filePath))
         {
-            curSelectedImagePath = filePath;
-            imageFile = await AudioConvertor.LoadTexture(curSelectedImagePath);
+            MainController.Instance.CurSelectedImageFile = await AudioConvertor.LoadTexture(filePath);
         }
         else
             Warning("Unsupported Image format");
@@ -130,6 +131,12 @@ public class HUDUI : MonoBehaviour
 
         textInput.SetActive(isTextMode);
         audioInput.SetActive(!isTextMode);
+    }
+    
+    private void OnOutputChanged(string outputString)
+    {
+        outputPanel.SetActive(true);
+        outputText.text = outputString;
     }
 }
 
