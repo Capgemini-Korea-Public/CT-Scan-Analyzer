@@ -45,12 +45,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0f88faf7bb6d6040895fd824a6e571a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  STTModelType: 0
-  LLMModelType: 1
-  SentenceSimilarityModelType: 0
+  STTModelType: 1
   MaxAudioDuration: 25
   STTConvertedString: 
+  LLMModelType: 1
   LLMOutputString: 
+  SentenceSimilarityModelType: 0
+  CurSelectedImageFile: []
 --- !u!1 &3711536953900984062
 GameObject:
   m_ObjectHideFlags: 0

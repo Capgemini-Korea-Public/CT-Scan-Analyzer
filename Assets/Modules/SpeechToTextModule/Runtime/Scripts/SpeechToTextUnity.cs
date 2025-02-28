@@ -202,14 +202,13 @@ namespace SpeechToTextUnity
 
         private static async Task LoadAudioToTensor()
         {
-            await Task.Run(() => 
-            {
-                numSamples = _audioClip.samples;
-                var data = new float[maxSamples];
-                numSamples = maxSamples;
-                _audioClip.GetData(data, 0);
-                audioInput = new Tensor<float>(new TensorShape(1, numSamples), data);
-            });
+            await Task.Yield();
+
+            numSamples = _audioClip.samples;
+            var data = new float[maxSamples];
+            numSamples = maxSamples;
+            _audioClip.GetData(data, 0);
+            audioInput = new Tensor<float>(new TensorShape(1, numSamples), data);
         }
 
         // Audio 모델에 입력할 수 있는 형태로 변환
