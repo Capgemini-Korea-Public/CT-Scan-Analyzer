@@ -481,7 +481,7 @@ MonoBehaviour:
   SliceViewCamera: {fileID: 624396005}
   Window: 2800
   Level: 2047
-  Slice: 0
+  Slice: 0.17100000381469727
   Orientation: 2
   AxialCropping: 0.001
   CoronalCropping: 0.7
