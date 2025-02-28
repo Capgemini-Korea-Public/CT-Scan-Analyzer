@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using MyAudioPackage.Core;
 using TMPro;
+using System.Threading.Tasks;
 
 public class AudioRecorderUI : MonoBehaviour
 {
@@ -77,7 +78,13 @@ public class AudioRecorderUI : MonoBehaviour
 
     private void OnSTTEnterButtonClicked()
     {
-        MainController.Instance.SpeechToText(recorderCore.FileManager.CurRecordedFilePath);
+        _ = SttToLLM();
+    }
+
+    private async Task SttToLLM()
+    {
+        await MainController.Instance.SpeechToText(recorderCore.FileManager.CurRecordedFilePath);
+        await MainController.Instance.LLM(MainController.Instance.STTConvertedString);
     }
 
     private void OnDurationInputChanged(string value)

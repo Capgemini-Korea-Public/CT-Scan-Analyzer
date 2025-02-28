@@ -7,7 +7,7 @@ namespace SpeechToTextUnity
     {
         public static string FileSelect()
         {
-            string filePath = EditorUtility.OpenFilePanel("Select Audio File", "", "");
+            string filePath = EditorUtility.OpenFilePanel("Select File", "", "");
             if (!string.IsNullOrEmpty(filePath))
             {
                 return filePath;

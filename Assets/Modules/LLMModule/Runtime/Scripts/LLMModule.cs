@@ -21,9 +21,26 @@ public class LLMModule : MonoBehaviour
     public int selectedModelIndex = 0;
     // EModelType에 따라 다른 llmService를 끼워준다.
 
+    private static LLMModule instance;
+    public static LLMModule Instance => instance;
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     private void Start()
     {
-        switch(apiType){
+        apiType = MainController.Instance.LLMModelType;
+        switch(apiType)
+        {
             // 차후 custom editor를 활용하여 native를 골랐을 때만 component를 추가하는 것으로 수정
             case EAPIType.Native:
                 llmService = new LocalLibraryAdaptor();
@@ -46,6 +63,12 @@ public class LLMModule : MonoBehaviour
     {
         Debug.Log($"{llmService.GetType().Name} start");
         return await llmService.Chat(inputText);
+    }
+
+    public async Task<string> Chat(string inputText, Texture2D inputImage)
+    {
+        Debug.Log($"{llmService.GetType().Name} start");
+        return await llmService.Chat(inputText, inputImage);
     }
 }
 
