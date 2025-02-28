@@ -136,6 +136,7 @@ GameObject:
   - component: {fileID: 534669908}
   - component: {fileID: 534669907}
   - component: {fileID: 534669909}
+  - component: {fileID: 534669910}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -184,7 +185,7 @@ Camera:
     height: 1
   near clip plane: 0.01
   far clip plane: 1000
-  field of view: 75
+  field of view: 118.2
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -210,8 +211,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 534669902}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.07564019, y: 0.9056525, z: -0.18261158, w: -0.37513348}
-  m_LocalPosition: {x: 344.74506, y: 256.648, z: 310.24512}
+  m_LocalRotation: {x: -0.07564014, y: 0.9056526, z: -0.18261154, w: -0.37513348}
+  m_LocalPosition: {x: 281.62634, y: 219.12512, z: 247.12643}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -268,7 +269,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 1993649556}
-  rotationAngle: 15
+  defaultAngle: 90
+  rotationDuration: 1
+  continuousRotationSpeed: 30
+  vtkCamera: {fileID: 0}
+--- !u!114 &534669910
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 534669902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28375bc5bb9c6c2468aa36bf0aaf9172, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cam: {fileID: 0}
+  minFov: 10
+  maxFov: 120
 --- !u!1 &624396004
 GameObject:
   m_ObjectHideFlags: 0
@@ -281,6 +300,7 @@ GameObject:
   - component: {fileID: 624396005}
   - component: {fileID: 624396006}
   - component: {fileID: 624396007}
+  - component: {fileID: 624396009}
   m_Layer: 0
   m_Name: Slice Camera
   m_TagString: Untagged
@@ -380,6 +400,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!114 &624396009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 624396004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52931be12ea7b8a48a49796530761c41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cam: {fileID: 0}
+  minOrthoSize: 1
+  maxOrthoSize: 1000
 --- !u!1 &1510630958
 GameObject:
   m_ObjectHideFlags: 0
@@ -409,7 +444,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9cf86368f9fbc9498062ab38b0daa21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FileName: C:/Users/82108/Documents/GitHub/CT-Scan-Analyzer/Assets/StreamingAssets\headsq.vti
+  FileName: "C:/Users/\uC724\uD61C\uB9B0/Documents/GitHub/CT-Scan-Analyzer/Assets/StreamingAssets\\headsq.vti"
   SliceViewCamera: {fileID: 624396005}
   Window: 2800
   Level: 2047
@@ -463,6 +498,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotationController: {fileID: 534669909}
+  fovController: {fileID: 534669910}
+  orthoZoomController: {fileID: 624396009}
 --- !u!4 &1604572982
 Transform:
   m_ObjectHideFlags: 0
@@ -488,7 +525,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1993649556}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: CenterPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -503,7 +540,7 @@ Transform:
   m_GameObject: {fileID: 1993649555}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 324.3181, y: 331.64307, z: 367.83115}
+  m_LocalPosition: {x: 127.5, y: 127.5, z: 93}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
