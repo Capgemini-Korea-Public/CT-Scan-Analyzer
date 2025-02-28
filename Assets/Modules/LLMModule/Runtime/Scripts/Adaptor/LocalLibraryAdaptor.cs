@@ -33,4 +33,9 @@ public class LocalLibraryAdaptor : ILLMService
     {
         throw new System.NotImplementedException();
     }
+
+    public Task<string> Chat(string inputText, Texture2D[] inputImages)
+    {
+        throw new System.NotImplementedException();
+    }
 }

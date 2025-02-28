@@ -8,5 +8,5 @@ public interface ILLMService
     // ChatBot with selected LLM
     public Task<string> Chat(string inputText);
     public Task<string> Chat(string inputText, Texture2D inputImage);
-    public Task<string> Chat(string inputText, Texture2D[] inputImages)
+    public Task<string> Chat(string inputText, Texture2D[] inputImages);
 }
