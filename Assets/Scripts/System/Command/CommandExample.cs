@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 public class CommandExample : MonoBehaviour
 {
@@ -7,15 +7,19 @@ public class CommandExample : MonoBehaviour
     public CameraOrthoZoomController orthoZoomController;
 
     private RotateCommand _rotateCommand;
+    private DiagnoseCommand diagnoseCommand;
     private ZoomCommand _zoomCommand;
     private CameraResetCommand _cameraResetCommand;
    
     private void Start()
     {
+        diagnoseCommand = new DiagnoseCommand();
         _rotateCommand = new RotateCommand(rotationController.transform);
         _zoomCommand = new ZoomCommand(fovController);
         _cameraResetCommand = new CameraResetCommand(rotationController, fovController, orthoZoomController);
-    }
+
+
+
 
     [ContextMenu("ROTATE")]
     public async void Test()
