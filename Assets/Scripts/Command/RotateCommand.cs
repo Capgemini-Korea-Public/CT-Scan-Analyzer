@@ -4,7 +4,7 @@ using UnityEngine;
 public class RotateCommand : ICommand
 {
     private const string CommandName = "Rotate";
-    private const string MessageFormat = "\nplease convert this by only this json format. direction type : left, right, up, down \n";
+    private const string MessageFormat = "\nplease convert this by only this json format. direction type : none, left, right, up, down \n";
     private Transform targetTransform;
     private CameraRotationController rotationController;
 
