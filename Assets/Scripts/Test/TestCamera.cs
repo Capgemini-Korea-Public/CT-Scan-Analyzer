@@ -28,31 +28,29 @@ public class TestCamera : MonoBehaviour
             rotationController.RotateSmooth("down");
         }
 
-        // Z 키를 누르면 줌 인 (기본 10% 확대)
         if (Input.GetKeyDown(KeyCode.Z))
         {
-            fovController.AdjustFov("zoom in");  // percent 매개변수를 생략하면 기본 10% 적용
+            // 줌 인: 현재 FOV의 30% 감소를 부드럽게 적용
+            fovController.SmoothZoom("zoom in", 30f);
         }
-
-        // X 키를 누르면 줌 아웃 (기본 10% 축소)
         if (Input.GetKeyDown(KeyCode.X))
         {
-            fovController.AdjustFov("zoom out"); // percent 매개변수를 생략하면 기본 10% 적용
+            // 줌 아웃: 현재 FOV의 30% 증가를 부드럽게 적용
+            fovController.SmoothZoom("zoom out", 30f);
         }
 
-        // C 키를 누르면 줌 인 (기본 10% 확대)
         if (Input.GetKeyDown(KeyCode.C))
         {
-            orthoZoomController.AdjustOrthoZoom("zoom in");
+            // 줌 인: 30% 변화 (부드럽게 적용)
+            orthoZoomController.AdjustOrthoZoom("zoom in", 30f);
         }
-
-        // V 키를 누르면 줌 아웃 (기본 10% 축소)
         if (Input.GetKeyDown(KeyCode.V))
         {
-            orthoZoomController.AdjustOrthoZoom("zoom out");
+            // 줌 아웃: 30% 변화 (부드럽게 적용)
+            orthoZoomController.AdjustOrthoZoom("zoom out", 30f);
         }
 
-        if(Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R))
         {
             AllReset();
         }

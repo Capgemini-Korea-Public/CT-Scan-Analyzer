@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class CameraFovController : MonoBehaviour
@@ -10,10 +11,15 @@ public class CameraFovController : MonoBehaviour
     [Tooltip("FOV의 최대값 (예: 120도)")]
     public float maxFov = 120f;
 
+    [Tooltip("연속 줌 시 초당 FOV 변화율 (퍼센트 단위)")]
+    public float continuousZoomSpeed = 10f; // 예를 들어 10% 변화
+
     // 초기 상태 저장용 변수
     private float initialFov;
     private Vector3 initialPosition;
     private Quaternion initialRotation;
+
+    private Coroutine smoothZoomCoroutine;
 
     void Start()
     {
@@ -28,43 +34,52 @@ public class CameraFovController : MonoBehaviour
     }
 
     /// <summary>
-    /// FOV를 조정하여 확대/축소 효과를 적용합니다.
+    /// SmoothZoom 함수는 주어진 command("zoom in" 또는 "zoom out")와 percent에 따라
+    /// 현재 FOV에서 목표 FOV로 부드럽게 변화시킵니다.
+    /// percent 매개변수가 생략되면 기본값 10%가 적용됩니다.
     /// </summary>
-    /// <param name="command">"zoom in" 또는 "zoom out" 등 명령 문자열</param>
-    /// <param name="percent">현재 FOV에 대해 몇 퍼센트 변화시킬지 (예: 10은 10% 변화)</param>
-    public void AdjustFov(string command, float percent = 10f)
+    /// <param name="command">"zoom in" 또는 "zoom out"</param>
+    /// <param name="percent">변화할 퍼센트 (예: 30이면 현재 FOV의 30% 변화)</param>
+    public void SmoothZoom(string command, float percent = 10f)
     {
-        if (cam == null)
+        if (smoothZoomCoroutine != null)
         {
-            Debug.LogWarning("CameraFovController: 카메라 컴포넌트가 없습니다.");
-            return;
+            StopCoroutine(smoothZoomCoroutine);
         }
+        smoothZoomCoroutine = StartCoroutine(SmoothZoomCoroutine(command, percent));
+    }
 
-        float currentFov = cam.fieldOfView;
-        float newFov = currentFov;
+    IEnumerator SmoothZoomCoroutine(string command, float percent)
+    {
+        float startFov = cam.fieldOfView;
+        float targetFov = startFov;
 
-        if (command.ToLower().Contains("in"))
+        string lowerCmd = command.ToLower();
+        if (lowerCmd.Contains("in"))
         {
-            // 줌 인: FOV 값을 줄여서 확대 효과
-            newFov = currentFov * (1f - percent / 100f);
+            targetFov = startFov * (1f - percent / 100f);
         }
-        else if (command.ToLower().Contains("out"))
+        else if (lowerCmd.Contains("out"))
         {
-            // 줌 아웃: FOV 값을 늘려서 축소 효과
-            newFov = currentFov * (1f + percent / 100f);
+            targetFov = startFov * (1f + percent / 100f);
         }
         else
         {
-            Debug.LogWarning("AdjustFov: 알 수 없는 명령어 - " + command);
-            return;
+            Debug.LogWarning("SmoothZoom: 알 수 없는 명령어 - " + command);
+            yield break;
         }
 
-        // FOV가 너무 작거나 크지 않도록 클램핑
-        newFov = Mathf.Clamp(newFov, minFov, maxFov);
-        cam.fieldOfView = newFov;
+        targetFov = Mathf.Clamp(targetFov, minFov, maxFov);
 
-        Debug.Log($"FOV 조정: {currentFov} -> {newFov} ({command}, {percent}%)");
+        while (Mathf.Abs(cam.fieldOfView - targetFov) > 0.001f)
+        {
+            cam.fieldOfView = Mathf.MoveTowards(cam.fieldOfView, targetFov, continuousZoomSpeed * Time.deltaTime);
+            yield return null;
+        }
+        cam.fieldOfView = targetFov;
+        smoothZoomCoroutine = null;
     }
+
 
     /// <summary>
     /// 카메라의 FOV와 위치, 회전을 초기 상태로 복원합니다.

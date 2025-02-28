@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class CameraOrthoZoomController : MonoBehaviour
@@ -10,9 +11,14 @@ public class CameraOrthoZoomController : MonoBehaviour
     [Tooltip("Orthographic Size의 최대값 (예: 100)")]
     public float maxOrthoSize = 1000f;
 
+    [Tooltip("연속 줌 시 초당 변화율 (퍼센트)")]
+    public float continuousZoomSpeed = 10f; // 예를 들어, 초당 10% 변화
+
     private float initialOrthoSize;
     private Vector3 initialPosition;
     private Quaternion initialRotation;
+
+    private Coroutine continuousZoomCoroutine;
 
     void Start()
     {
@@ -32,41 +38,52 @@ public class CameraOrthoZoomController : MonoBehaviour
     }
 
     /// <summary>
-    /// Orthographic 카메라의 orthographicSize를 조정하여 확대/축소 효과를 적용합니다.
+    /// AdjustOrthoZoom 함수는 "zoom in" 또는 "zoom out" 명령과 percent 매개변수를 받아
+    /// 현재 orthographicSize에서 목표값 (현재값의 percent% 만큼 변화된 값)으로 부드럽게 변화시킵니다.
+    /// percent가 전달되지 않으면 기본값 10%가 적용됩니다.
     /// </summary>
-    /// <param name="command">"zoom in" 또는 "zoom out" 등 명령 문자열</param>
-    /// <param name="percent">얼마나 퍼센트 변화시킬지 (기본값: 10)</param>
+    /// <param name="command">"zoom in" 또는 "zoom out"</param>
+    /// <param name="percent">변화할 퍼센트 (예: 30이면 30% 변화)</param>
     public void AdjustOrthoZoom(string command, float percent = 10f)
     {
-        if (cam == null)
+        if (continuousZoomCoroutine != null)
         {
-            Debug.LogWarning("CameraOrthoZoomController: 카메라 컴포넌트가 없습니다.");
-            return;
+            StopCoroutine(continuousZoomCoroutine);
         }
+        continuousZoomCoroutine = StartCoroutine(AdjustOrthoZoomCoroutine(command, percent));
+    }
 
-        float currentSize = cam.orthographicSize;
-        float newSize = currentSize;
+    IEnumerator AdjustOrthoZoomCoroutine(string command, float percent)
+    {
+        float startSize = cam.orthographicSize;
+        float targetSize = startSize;
+        string lowerCmd = command.ToLower();
 
-        if (command.ToLower().Contains("in"))
+        if (lowerCmd.Contains("in"))
         {
-            // 줌 인: orthographicSize를 줄여서 확대 효과
-            newSize = currentSize * (1f - percent / 100f);
+            targetSize = startSize * (1f - percent / 100f);
         }
-        else if (command.ToLower().Contains("out"))
+        else if (lowerCmd.Contains("out"))
         {
-            // 줌 아웃: orthographicSize를 늘려서 축소 효과
-            newSize = currentSize * (1f + percent / 100f);
+            targetSize = startSize * (1f + percent / 100f);
         }
         else
         {
             Debug.LogWarning("AdjustOrthoZoom: 알 수 없는 명령어 - " + command);
-            return;
+            yield break;
         }
 
-        newSize = Mathf.Clamp(newSize, minOrthoSize, maxOrthoSize);
-        cam.orthographicSize = newSize;
-        Debug.Log($"OrthographicSize 조정: {currentSize} -> {newSize} ({command}, {percent}%)");
+        targetSize = Mathf.Clamp(targetSize, minOrthoSize, maxOrthoSize);
+
+        while (Mathf.Abs(cam.orthographicSize - targetSize) > 0.001f)
+        {
+            cam.orthographicSize = Mathf.MoveTowards(cam.orthographicSize, targetSize, continuousZoomSpeed * Time.deltaTime);
+            yield return null;
+        }
+        cam.orthographicSize = targetSize;
+        continuousZoomCoroutine = null;
     }
+
 
     public void ResetCameraState()
     {
