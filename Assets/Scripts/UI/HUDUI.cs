@@ -1,4 +1,3 @@
-using SpeechToTextUnity;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,11 +5,13 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Collections.Generic;
 using System.Collections;
+using OpenAI;
+using SpeechToTextUnity;
 
 public class HUDUI : MonoBehaviour
 {
     [Header("Image Input")]
-    [SerializeField] private Button imageSelectButton;
+    [SerializeField] private Button imageCaptureButton;
 
     [Header("Text Input")]
     [SerializeField] private GameObject textInput;
@@ -34,8 +35,8 @@ public class HUDUI : MonoBehaviour
 
     private void Start()
     {
-        if (imageSelectButton != null) 
-             imageSelectButton.onClick.AddListener(OnClickImageSelectBtn);
+        if (imageCaptureButton != null) 
+             imageCaptureButton.onClick.AddListener(OnClickImageSelectBtn);
         if (textInputButton != null)
             textInputButton.onClick.AddListener(() => ToggleInputMode(true));
         if (audioInputButton != null)
@@ -54,7 +55,7 @@ public class HUDUI : MonoBehaviour
 
     private void OnClickImageSelectBtn()
     {
-        _ = SelectImage();
+        _ = CaptureImage();
     }
 
     private void OnClickTextInputEnterBtn()
@@ -68,15 +69,20 @@ public class HUDUI : MonoBehaviour
         curInputText = value;
     }
 
-    private async Task SelectImage()
+    private async Task CaptureImage()
     {
-        string filePath = FileSelector.FileSelect();
-        if (IsValidImageFormat(filePath))
-        {
-            MainController.Instance.ResetSelectedImage(await AudioConvertor.LoadTexture(filePath));
-        }
-        else
-            Warning("Unsupported Image format");
+        // Method - Select Image File Directly
+        //string filePath = FileSelector.FileSelect();
+        //if (IsValidImageFormat(filePath))
+        //{
+        //    MainController.Instance.CaptureImage(await AudioConvertor.LoadTexture(filePath));
+        //}
+        //else
+        //    Warning("Unsupported Image format");
+
+        CameraCaptureSystem.Instance.Capture();
+        string filePath = CameraCaptureSystem.Instance.CapturedImageSavePath;
+        MainController.Instance.CaptureImage(await AudioConvertor.LoadTexture(filePath));
     }
 
     private bool IsValidImageFormat(string filePath)
