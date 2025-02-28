@@ -78,7 +78,7 @@ public class HUDUI : MonoBehaviour
         string filePath = FileSelector.FileSelect();
         if (IsValidImageFormat(filePath))
         {
-            //MainController.Instance.CurSelectedImageFile = await AudioConvertor.LoadTexture(filePath);
+            MainController.Instance.ResetSelectedImage(await AudioConvertor.LoadTexture(filePath));
         }
         else
             Warning("Unsupported Image format");
@@ -120,7 +120,6 @@ public class HUDUI : MonoBehaviour
             text.color = textColor;
             yield return null; 
         }
-
         text.text = ""; 
     }
 
