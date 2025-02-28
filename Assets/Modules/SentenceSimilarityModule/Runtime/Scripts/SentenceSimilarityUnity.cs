@@ -98,9 +98,9 @@ namespace SentenceSimilarityUnity
 
                 onMeasureSuccess?.Invoke(results);
           
-                DateTime endTime = DateTime.Now; // 종료 시간 기록
-                TimeSpan duration = endTime - startTime; // 소요 시간 계산
-                Debug.Log($"ExecuteModelFromSentis 실행 시간: {duration.Hours:D2}:{duration.Minutes:D2}:{duration.Seconds:D2}.{duration.Milliseconds:D3}"); // 로그 출력
+                DateTime endTime = DateTime.Now; 
+                TimeSpan duration = endTime - startTime; 
+                Debug.Log($"ExecuteModelFromSentis Timer: {duration.Hours:D2}:{duration.Minutes:D2}:{duration.Seconds:D2}.{duration.Milliseconds:D3}");
 
             }
             catch (Exception e)
