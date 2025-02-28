@@ -6,54 +6,76 @@ using UnityEngine;
 public class CommandSystemManager : MonoBehaviour
 {
     public static CommandSystemManager instance;
-    
-    private Dictionary<string, ICommand> commandDict = new Dictionary<string, ICommand>();
 
+    private Dictionary<string, ICommand> commandDict = new Dictionary<string, ICommand>();
+    
     private void Awake()
     {
         instance = this;
     }
-    public void RegisterCommand(string key,ICommand command)
+    public void RegisterCommand(string input, ICommand command)
     {
-        commandDict[key] = command;
+        commandDict[input] = command;
     }
 
-    public void ExecuteCommand(string key, params object[] parameters)
+    public void ExecuteCommand(string input, string sentence)
     {
-        if (commandDict.ContainsKey(key))
+        if (commandDict.ContainsKey(input))
         {
-            commandDict[key].Execute(parameters);
+            commandDict[input].Execute(sentence);
         }
-        
-       
     }
+
+    public string GetInputFormat(string input)
+    {
+        return commandDict.TryGetValue(input, out ICommand command) ? command.GetInputFormat() : "";
+    }
+    
+    
 }
 
 public interface ICommand
 {
-    public void Execute(params object[] parameters);
+    public void Execute(string output);
+    public string GetInputFormat();
 }
 
 public class RotateCommand : ICommand
 {
-    private const string COMMAND_NAME = "Rotate";
+    private const string CommandName = "Rotate";
+    private const string MessageFormat = "\nplease convert this by only this json format.";
     private Transform targetTransform;
 
+    protected RotationInformation rotationInformation;
     public RotateCommand(Transform target)
     {
         targetTransform = target;
-        CommandSystemManager.instance.RegisterCommand(COMMAND_NAME , this);
+        CommandSystemManager.instance.RegisterCommand(CommandName, this);
+        rotationInformation = new RotationInformation();
     }
 
-    public void Execute(params object[] parameters)
+    public void Execute(string output)
     {
-        if (parameters.Length > 0 && parameters[0] is float angle)
+        try
         {
-            targetTransform.Rotate(Vector3.up, angle);
+            rotationInformation = JsonUtility.FromJson<RotationInformation>(output);
         }
-        else
+        catch (Exception e)
         {
-            targetTransform.Rotate(Vector3.up, 45f);
+            Console.WriteLine(e);
+            throw;
         }
     }
+
+    public string GetInputFormat()
+    {
+        string message = MessageFormat + JsonUtility.ToJson(rotationInformation);
+        return message;
+    }
+}
+
+public class RotationInformation
+{
+    public float angle;
+    public string direction;
 }

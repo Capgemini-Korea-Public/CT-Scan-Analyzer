@@ -1,25 +1,21 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 public class CommandExample : MonoBehaviour
 {
-    private CommandSystemManager commandManager;
-    private Transform targetObject;
-
-    void Start()
+    private RotateCommand _rotateCommand;
+    private void Start()
     {
-        commandManager = GetComponent<CommandSystemManager>();
-        targetObject = transform;
-
-        // 커맨드 등록
-        commandManager.RegisterCommand("rotate", new RotateCommand(targetObject));
+        _rotateCommand = new RotateCommand(this.transform);
     }
 
-    void Update()
+    [ContextMenu("ROTATE")]
+    public async void Test()
     {
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            // 69도 회전
-            commandManager.ExecuteCommand("rotate", 69f);
-        }
+        string str = "I want to turn the camera 60 degrees to the right" + CommandSystemManager.instance.GetInputFormat("Rotate");
+        string output = await LLMModule.Instance.Chat(str);
+
+        RotationInformation rotationInformation = JsonUtility.FromJson<RotationInformation>(output);
+        Debug.Log($" {rotationInformation.angle} / {rotationInformation.direction}");
     }
 }
 
