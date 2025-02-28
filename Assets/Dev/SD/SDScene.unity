@@ -502,7 +502,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2b0c261c3247db4e8774cb925a10fb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  activateType: 0
+  activateType: 1
   sentenceList: []
   maxSentenceCount: 100
   enteredSentence: 

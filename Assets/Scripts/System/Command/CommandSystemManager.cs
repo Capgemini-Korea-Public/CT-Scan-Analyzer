@@ -34,8 +34,6 @@ public interface ICommand
     public void Execute(params object[] parameters);
 }
 
-
-// 회전 명령 예시
 public class RotateCommand : ICommand
 {
     private const string COMMAND_NAME = "Rotate";
