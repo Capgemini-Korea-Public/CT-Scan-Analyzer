@@ -1,42 +1,60 @@
 using UnityEngine;
 using System.IO;
+using System;
+using System.Threading.Tasks;
 
-public class CameraCaptureSystem :MonoBehaviour
+public class CameraCaptureSystem : MonoBehaviour
 {
-    public Camera cameraToCapture;
-    public string savePath;
+    private static CameraCaptureSystem instance;
+    public static CameraCaptureSystem Instance => instance;
 
+    public Camera CaptureCamera;
+    public string CapturedImageSavePath;
+    public event Action<string> OnLLMResponseUpdated;
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+        
+    }
     private void Start()
     {
-        savePath = Application.persistentDataPath;
+        CapturedImageSavePath = Path.Combine(Application.persistentDataPath, "CapturedImage.png");
     }
 
     [ContextMenu("Capture")]
     public void Capture()
     {
-        // RenderTexture를 생성하여 카메라의 출력을 저장할 준비
-        RenderTexture renderTexture = new RenderTexture(Screen.width, Screen.height, 24);
-        cameraToCapture.targetTexture = renderTexture;
+        int width = Screen.width; 
+        int height = Screen.height;
 
-        // 텍스처를 캡처한 후, 다시 카메라의 출력 대상을 원래대로 복원
-        RenderTexture currentRT = RenderTexture.active;
-        RenderTexture.active = renderTexture;
+        float originalAspect = CaptureCamera.aspect;
+        CaptureCamera.aspect = (float)width / height;
 
-        cameraToCapture.Render();
+        RenderTexture rt = new RenderTexture(width, height, 24);
+        CaptureCamera.targetTexture = rt;
+        Texture2D screenShot = new Texture2D(width, height, TextureFormat.RGB24, false);
 
-        // 캡처된 텍스처를 2D 텍스처로 변환
-        Texture2D capturedImage = new Texture2D(Screen.width, Screen.height);
-        capturedImage.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
-        capturedImage.Apply();
+        CaptureCamera.Render();
+        RenderTexture.active = rt;
+        screenShot.ReadPixels(new Rect(0, 0, width, height), 0, 0);
+        screenShot.Apply();
 
-        // 텍스처를 PNG 파일로 저장
-        byte[] bytes = capturedImage.EncodeToPNG();
-        System.IO.File.WriteAllBytes(savePath, bytes);
+        CaptureCamera.aspect = originalAspect;
+        CaptureCamera.targetTexture = null;
+        RenderTexture.active = null;
+        Destroy(rt);
 
-        // 원래 상태로 복원
-        RenderTexture.active = currentRT;
-        cameraToCapture.targetTexture = null;
+        byte[] bytes = screenShot.EncodeToPNG();
+        File.WriteAllBytes(CapturedImageSavePath, bytes);
 
-        Debug.Log("Captured image saved to " + savePath);
+        Debug.Log("Screenshot saved: " + CapturedImageSavePath);
     }
 }
