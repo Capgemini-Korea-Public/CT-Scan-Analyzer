@@ -504,10 +504,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9cf86368f9fbc9498062ab38b0daa21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FileName: D:/Capgemini/CT-Scan-Analyzer/Assets/StreamingAssets\headsq.vti
+  FileName: C:/Github Repositories/CT-Scan-Analyzer/Assets/StreamingAssets\headsq.vti
   SliceViewCamera: {fileID: 624396005}
   Window: 2800
-  Level: 2047
+  Level: 2032
   Slice: 0
   Orientation: 2
   AxialCropping: 0.001
