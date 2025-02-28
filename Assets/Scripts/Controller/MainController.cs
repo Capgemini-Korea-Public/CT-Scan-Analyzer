@@ -1,5 +1,6 @@
 using SpeechToTextUnity;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -18,7 +19,7 @@ public class MainController : MonoBehaviour
     public ActivateType SentenceSimilarityModelType;
 
     [Header("Elements")]
-    public Texture2D[] CurSelectedImageFile;
+    public List<Texture2D> CurSelectedImageFile = new List<Texture2D>();
 
     private static MainController instance;
     public static MainController Instance => instance;
@@ -54,13 +55,14 @@ public class MainController : MonoBehaviour
     /// </summary>
     public async Task LLM(string inputText)
     {
-        //if (CurSelectedImageFile == null)
-        //    LLMOutputString = await LLMModule.Instance.Chat(inputText);
-        //else
-        LLMOutputString = await LLMModule.Instance.Chat(inputText, CurSelectedImageFile);
+        Texture2D[] curImages = CurSelectedImageFile.ToArray();
 
-        if (!string.IsNullOrEmpty(LLMOutputString))
-            OnLLMResponseUpdated?.Invoke(LLMOutputString);
+        if (CurSelectedImageFile == null)
+            LLMOutputString = await LLMModule.Instance.Chat(inputText);
+        else
+            LLMOutputString = await LLMModule.Instance.Chat(inputText, curImages);
+
+        OnLLMUpdated();
     }
 
     /// <summary>
@@ -69,5 +71,19 @@ public class MainController : MonoBehaviour
     public void ResetSelectedImage()
     {
         CurSelectedImageFile = null;
+    }
+
+    /// <summary>
+    /// Add Selected Image
+    /// </summary>
+    public void ResetSelectedImage(Texture2D image)
+    {
+        CurSelectedImageFile.Add(image);
+    }
+
+    public void OnLLMUpdated()
+    {
+        if (!string.IsNullOrEmpty(LLMOutputString))
+            OnLLMResponseUpdated?.Invoke(LLMOutputString);
     }
 }
