@@ -3,9 +3,11 @@ using UnityEngine;
 public class CommandExample : MonoBehaviour
 {
     private RotateCommand _rotateCommand;
+    private DiagnoseCommand diagnoseCommand;
     private void Start()
     {
         _rotateCommand = new RotateCommand(this.transform);
+        diagnoseCommand = new DiagnoseCommand();
     }
 
     [ContextMenu("ROTATE")]
