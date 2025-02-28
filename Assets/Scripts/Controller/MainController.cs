@@ -19,7 +19,7 @@ public class MainController : MonoBehaviour
     public ActivateType SentenceSimilarityModelType;
 
     [Header("Elements")]
-    public List<Texture2D> CurSelectedImageFile = new List<Texture2D>();
+    public List<Texture2D> CurCapturedImages = new List<Texture2D>();
 
     private static MainController instance;
     public static MainController Instance => instance;
@@ -63,23 +63,30 @@ public class MainController : MonoBehaviour
     /// </summary>
     public void ResetSelectedImage()
     {
-        CurSelectedImageFile = null;
+        CurCapturedImages.Clear();
     }
 
     /// <summary>
     /// Add Selected Image
     /// </summary>
-    public void ResetSelectedImage(Texture2D image)
+    public void CaptureImage(Texture2D image)
     {
-        CurSelectedImageFile.Add(image);
+        ResetSelectedImage();
+        CurCapturedImages.Add(image);
     }
 
+    /// <summary>
+    /// A method Execute When LLM Successfully Get Response
+    /// </summary>
     public void OnLLMUpdated()
     {
         if (!string.IsNullOrEmpty(LLMOutputString))
             OnLLMResponseUpdated?.Invoke(LLMOutputString);
     }
 
+    /// <summary>
+    /// A method Execute When Sentence Measure Success
+    /// </summary>
     public async void SuccessMeasureSentence(SimilarityResult similarityResult)
     {
         string command = similarityResult.sentence;
@@ -91,11 +98,11 @@ public class MainController : MonoBehaviour
         }
         string input = similarityResult.enterdSentence + CommandSystemManager.instance.GetInputFormat(command);
 
-        if (CurSelectedImageFile == null)
+        if (CurCapturedImages == null)
             LLMOutputString = await LLMModule.Instance.Chat(input);
         else
         {
-            Texture2D[] curImages = CurSelectedImageFile.ToArray();
+            Texture2D[] curImages = CurCapturedImages.ToArray();
             LLMOutputString = await LLMModule.Instance.Chat(input, curImages);
         }
         OnLLMUpdated();

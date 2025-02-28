@@ -3291,7 +3291,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Select \nCT Image
+  m_text: Capture \nCT Image
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 2032339f567bde146b32a51cb1425adf, type: 2}
   m_sharedMaterial: {fileID: 21694689038030200, guid: 2032339f567bde146b32a51cb1425adf,
@@ -4367,7 +4367,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Image Select
+  m_text: Image Capture
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: debe894442e153d479c7f9d07cce1276, type: 2}
   m_sharedMaterial: {fileID: 21975412471922176, guid: debe894442e153d479c7f9d07cce1276,
@@ -4395,8 +4395,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 23
-  m_fontSizeBase: 23
+  m_fontSize: 21
+  m_fontSizeBase: 21
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -4697,7 +4697,7 @@ GameObject:
   - component: {fileID: 4897654526707004942}
   - component: {fileID: 1509925984271360020}
   m_Layer: 5
-  m_Name: ImageSelectBtn
+  m_Name: ImageCaptureBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9397,7 +9397,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d78606f1a9cdc642844a9014a841ff8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  imageSelectButton: {fileID: 1509925984271360020}
+  imageCaptureButton: {fileID: 1509925984271360020}
   textInput: {fileID: 5326984175555303857}
   textInputButton: {fileID: 7161034446567730611}
   textInputEnterButton: {fileID: 3243604214273372072}
