@@ -10,14 +10,14 @@ public class CommandExample : MonoBehaviour
     private DiagnoseCommand diagnoseCommand;
     private ZoomCommand _zoomCommand;
     private CameraResetCommand _cameraResetCommand;
-   
+
     private void Start()
     {
         diagnoseCommand = new DiagnoseCommand();
         _rotateCommand = new RotateCommand(rotationController.transform);
         _zoomCommand = new ZoomCommand(fovController);
         _cameraResetCommand = new CameraResetCommand(rotationController, fovController, orthoZoomController);
-
+    }
 
 
 
