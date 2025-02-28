@@ -84,7 +84,8 @@ public class RESTfulAPIAdaptor : ILLMService
     {
         // apikey ignore에 추가
         // image Read/Write = true
-        // Comprerssion = none 설정 필요
+        // Comprerssion = none 설정
+        TextureConverter.ConvertTexture(inputImage);
         string base64Image = Ollama.Texture2Base64(inputImage);
 
         // 메시지 구성
