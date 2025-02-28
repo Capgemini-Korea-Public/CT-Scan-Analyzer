@@ -17,7 +17,7 @@ public class AudioRecorderUI : MonoBehaviour
     public AudioSource analysisSource;
     public AudioSource playbackSource;
 
-    // ÄÚ¾î ·ÎÁ÷ ÀÎ½ºÅÏ½º: MonoBehaviour¿¡ ÀÇÁ¸ÇÏÁö ¾Ê´Â ¼ø¼ö C# Å¬·¡½º
+    // ï¿½Ú¾ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Î½ï¿½ï¿½Ï½ï¿½: MonoBehaviourï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´ï¿½ ï¿½ï¿½ï¿½ï¿½ C# Å¬ï¿½ï¿½ï¿½ï¿½
     private AudioRecorder recorderCore;
     private AudioFileManager fileManagerCore;
 
@@ -28,7 +28,7 @@ public class AudioRecorderUI : MonoBehaviour
         recorderCore = new AudioRecorder(analysisSource, playbackSource);
         fileManagerCore = new AudioFileManager();
 
-        // UI ¹öÆ° ÀÌº¥Æ® ¿¬°á
+        // UI ï¿½ï¿½Æ° ï¿½Ìºï¿½Æ® ï¿½ï¿½ï¿½ï¿½
         if (recordButton != null)
             recordButton.onClick.AddListener(OnStartButtonClicked);
         if (stopButton != null)
@@ -40,11 +40,11 @@ public class AudioRecorderUI : MonoBehaviour
         if (sttEnterButton != null)
             sttEnterButton.onClick.AddListener(OnSTTEnterButtonClicked);
 
-        // ÀÔ·Â ÇÊµå º¯°æ ½Ã ³ìÀ½ ½Ã°£ ¾÷µ¥ÀÌÆ®
+        // ï¿½Ô·ï¿½ ï¿½Êµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
         if (durationInputField != null)
             durationInputField.onValueChanged.AddListener(OnDurationInputChanged);
 
-        // ÄÚ¾î ÀÌº¥Æ® ±¸µ¶: ³ìÀ½ ½ÃÀÛ/ÁßÁö ¹× ·Î±× ¸Þ½ÃÁö Àü´Þ
+        // ï¿½Ú¾ï¿½ ï¿½Ìºï¿½Æ® ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Î±ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         recorderCore.OnRecordingStarted += HandleRecordingStarted;
         recorderCore.OnRecordingStopped += HandleRecordingStopped;
         recorderCore.OnLog += AppendLog;
@@ -52,12 +52,12 @@ public class AudioRecorderUI : MonoBehaviour
 
     private async void OnStartButtonClicked()
     {
-        // ÀÔ·ÂµÈ ³ìÀ½ ½Ã°£ÀÌ ÀÖÀ¸¸é ÄÚ¾î¿¡ ¹Ý¿µ
+        // ï¿½Ô·Âµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ú¾î¿¡ ï¿½Ý¿ï¿½
         if (int.TryParse(durationInputField.text, out int duration))
         {
             recorderCore.SetRecordingDuration(duration);
         }
-        // ³ìÀ½ ½ÃÀÛ (ºñµ¿±â È£Ãâ)
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ñµ¿±ï¿½ È£ï¿½ï¿½)
         await recorderCore.StartRecordingAsync();
     }
 
@@ -78,14 +78,14 @@ public class AudioRecorderUI : MonoBehaviour
 
     private void OnSTTEnterButtonClicked()
     {
-        _ = SttToLLM();
+        _ = SttToSentenceSimilarity();
         MainController.Instance.ResetSelectedImage();
     }
 
-    private async Task SttToLLM()
+    private async Task SttToSentenceSimilarity()
     {
-        await MainController.Instance.SpeechToText(recorderCore.FileManager.CurRecordedFilePath);
-        await MainController.Instance.LLM(MainController.Instance.STTConvertedString);
+        await MainController.Instance.ExecuteSpeechToText(recorderCore.FileManager.CurRecordedFilePath);
+        MainController.Instance.ExecuteSentenceSimilarity(MainController.Instance.STTConvertedString);
         MainController.Instance.OnLLMUpdated();
     }
 
@@ -100,13 +100,13 @@ public class AudioRecorderUI : MonoBehaviour
     private void HandleRecordingStarted()
     {
         AppendLog("Recording started.");
-        // UI ¾÷µ¥ÀÌÆ®: ¿¹¸¦ µé¾î, ¹öÆ° »óÅÂ º¯°æ µî Ãß°¡ °¡´É
+        // UI ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½, ï¿½ï¿½Æ° ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½
     }
 
     private void HandleRecordingStopped()
     {
         AppendLog("Recording stopped.");
-        // UI ¾÷µ¥ÀÌÆ®: ¿¹¸¦ µé¾î, ¹öÆ° »óÅÂ º¯°æ µî Ãß°¡ °¡´É
+        // UI ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½, ï¿½ï¿½Æ° ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½
     }
 
     private void AppendLog(string message)

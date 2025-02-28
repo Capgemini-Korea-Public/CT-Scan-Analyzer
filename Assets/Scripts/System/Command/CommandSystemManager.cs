@@ -16,6 +16,7 @@ public class CommandSystemManager : MonoBehaviour
     public void RegisterCommand(string input, ICommand command)
     {
         commandDict[input] = command;
+        SentenceSimilarityController.Instance.RegisterSentence(input);
     }
 
     public void ExecuteCommand(string input, string sentence)
@@ -30,8 +31,6 @@ public class CommandSystemManager : MonoBehaviour
     {
         return commandDict.TryGetValue(input, out ICommand command) ? command.GetInputFormat() : "";
     }
-    
-    
 }
 
 public interface ICommand
@@ -43,7 +42,7 @@ public interface ICommand
 public class RotateCommand : ICommand
 {
     private const string CommandName = "Rotate";
-    private const string MessageFormat = "\nplease convert this by only this json format.";
+    private const string MessageFormat = "\nplease convert this by only this json format. direction type : left, right, up, down \n";
     private Transform targetTransform;
 
     protected RotationInformation rotationInformation;
@@ -79,3 +78,4 @@ public class RotationInformation
     public float angle;
     public string direction;
 }
+

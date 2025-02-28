@@ -45,7 +45,7 @@ public class MainController : MonoBehaviour
     /// <summary>
     /// A method that converts a given audio file to text using an STT module.
     /// </summary>
-    public async Task SpeechToText(string filePath)
+    public async Task ExecuteSpeechToText(string filePath)
     {
         STTConvertedString = await AudioConvertor.ConvertAudioToText(filePath, STTModelType, MaxAudioDuration);
     }
@@ -53,18 +53,11 @@ public class MainController : MonoBehaviour
     /// <summary>
     /// A method that asks an LLM for an image or text.
     /// </summary>
-    public async Task LLM(string inputText)
+    public void  ExecuteSentenceSimilarity(string inputText)
     {
-        Texture2D[] curImages = CurSelectedImageFile.ToArray();
-
-        if (CurSelectedImageFile == null)
-            LLMOutputString = await LLMModule.Instance.Chat(inputText);
-        else
-            LLMOutputString = await LLMModule.Instance.Chat(inputText, curImages);
-
-        OnLLMUpdated();
+        SentenceSimilarityController.Instance.MeasureSentenceAccuracy(inputText);
     }
-
+    
     /// <summary>
     /// A method to reset the selected image.
     /// </summary>
@@ -85,5 +78,28 @@ public class MainController : MonoBehaviour
     {
         if (!string.IsNullOrEmpty(LLMOutputString))
             OnLLMResponseUpdated?.Invoke(LLMOutputString);
+    }
+
+    public async void SuccessMeasureSentence(SimilarityResult similarityResult)
+    {
+        string command = similarityResult.sentence;
+        string format = CommandSystemManager.instance.GetInputFormat(command);
+        if (format == null)
+        {
+            Debug.LogWarning($"{command} not found");
+            return;
+        }
+        string input = similarityResult.enterdSentence + CommandSystemManager.instance.GetInputFormat(command);
+
+        if (CurSelectedImageFile == null)
+            LLMOutputString = await LLMModule.Instance.Chat(input);
+        else
+        {
+            Texture2D[] curImages = CurSelectedImageFile.ToArray();
+            LLMOutputString = await LLMModule.Instance.Chat(input, curImages);
+        }
+        OnLLMUpdated();
+        
+        CommandSystemManager.instance.ExecuteCommand(command, LLMOutputString);
     }
 }

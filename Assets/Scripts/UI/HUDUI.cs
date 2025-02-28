@@ -59,18 +59,13 @@ public class HUDUI : MonoBehaviour
 
     private void OnClickTextInputEnterBtn()
     {
-        _ = RunLLM();
+        MainController.Instance.ExecuteSentenceSimilarity(curInputText);
         MainController.Instance.ResetSelectedImage();
     }
 
     private void OnTextInputValChanged(string value)
     {
         curInputText = value;
-    }
-
-    private async Task RunLLM()
-    {
-        await MainController.Instance.LLM(curInputText);
     }
 
     private async Task SelectImage()

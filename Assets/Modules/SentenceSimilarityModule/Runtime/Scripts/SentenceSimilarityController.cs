@@ -26,7 +26,7 @@ public class SentenceSimilarityController : MonoBehaviour
 
     [Header("# Measure Events")]
     [SerializeField] public UnityEvent OnMeasureBeginEvent;
-    [SerializeField] public UnityEvent<SimilarityResult[]> OnMeasureSuccessEvent;
+    [SerializeField] public UnityEvent<SimilarityResult> OnMeasureSuccessEvent;
     [SerializeField] public UnityEvent OnMeasureFailEvent;
 
     [Header("# Register Events")]
@@ -188,9 +188,10 @@ public class SentenceSimilarityController : MonoBehaviour
         // 최종 점수에 따라 결과 정렬
         Array.Sort(results, (a, b) => b.accuracy.CompareTo(a.accuracy));
 
-        if (results[0].accuracy >= similarityThreshold)
+        if (results[0].accuracy >= similarityThreshold) // 유사한 커맨드
         {
-            OnMeasureSuccessEvent?.Invoke(results);
+            results[0].enterdSentence = enteredSentence;
+            OnMeasureSuccessEvent?.Invoke(results[0]);
         }
         else
         {
@@ -220,4 +221,5 @@ public struct SimilarityResult
 {
     public string sentence;
     public float accuracy;
+    public string enterdSentence;
 }
