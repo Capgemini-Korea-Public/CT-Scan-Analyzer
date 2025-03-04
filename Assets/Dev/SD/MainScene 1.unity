@@ -520,6 +520,37 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 481b82be762e59a4d87e703f389e856f, type: 3}
+--- !u!1 &1649253964
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1649253965}
+  m_Layer: 0
+  m_Name: CenterTransform
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1649253965
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1649253964}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 127.5, y: 127.5, z: 93}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1978060835
 GameObject:
   m_ObjectHideFlags: 0
@@ -1140,7 +1171,7 @@ GameObject:
   - component: {fileID: 3170616957486858051}
   m_Layer: 6
   m_Name: Slice Camera
-  m_TagString: Untagged
+  m_TagString: SliceCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1171,7 +1202,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d9343a36757a2249b056225d4698d2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 2043104228}
+  target: {fileID: 1649253965}
   defaultAngle: 90
   rotationDuration: 1
   continuousRotationSpeed: 30
@@ -1223,3 +1254,4 @@ SceneRoots:
   - {fileID: 1597535823}
   - {fileID: 2034215616}
   - {fileID: 2043104228}
+  - {fileID: 1649253965}

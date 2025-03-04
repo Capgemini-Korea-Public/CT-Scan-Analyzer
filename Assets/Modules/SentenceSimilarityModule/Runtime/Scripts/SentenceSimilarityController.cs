@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using SentenceSimilarityUnity;
+using Unity.Sentis;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -42,6 +44,9 @@ public class SentenceSimilarityController : MonoBehaviour
     private Rake rakeAlgorithm;
     //private SentenceSaveSystem saveSystem;
     
+    private ModelAsset modelAsset;
+    private TextAsset vocab;
+    private string[] vocabTokens; 
     private void Awake()
     {
         if (instance == null)
@@ -56,8 +61,27 @@ public class SentenceSimilarityController : MonoBehaviour
         rakeAlgorithm = new Rake();
         // saveSystem = new SentenceSaveSystem();
         // sentenceList = saveSystem.LoadSentences();
+        LoadModelAsset();
     }
 
+    private void LoadModelAsset()
+    {
+        modelAsset = Resources.Load<ModelAsset>("MiniLMv6");
+        vocab = Resources.Load<TextAsset>("vocab");
+        SplitVocabTokens(vocab); // Split vocabulary tokens if not already initialized
+    }
+
+    private void SplitVocabTokens(TextAsset vocap)
+    {
+        vocabTokens = vocap.text
+            .Split(new[] {
+                '\n'
+            }, StringSplitOptions.RemoveEmptyEntries)
+            .Select(line => line.Trim())
+            .Where(line => !string.IsNullOrWhiteSpace(line))
+            .ToArray();
+    }
+    
     public void MeasureSentenceAccuracy(string input)
     {
         activateType = MainController.Instance.SentenceSimilarityModelType;
@@ -106,7 +130,7 @@ public class SentenceSimilarityController : MonoBehaviour
                 (positiveSentence, MeasureSuccess, MeasureFailure, filteredSentenceList.ToArray());
         else
             SentenceSimilarityModule.MeasureSentenceAccuracyFromSentis
-                (positiveSentence, MeasureSuccess, MeasureFailure, filteredSentenceList.ToArray());
+                (positiveSentence, MeasureSuccess, MeasureFailure, filteredSentenceList.ToArray(),modelAsset, vocabTokens);
     }
 
 

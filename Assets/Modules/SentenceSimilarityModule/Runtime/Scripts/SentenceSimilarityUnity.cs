@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HuggingFace.API;
@@ -17,7 +16,7 @@ namespace SentenceSimilarityUnity
 
         public static void MeasureSentenceAccuracyFromAPI(string input, Action<float[]> onMeasureSuccess, Action<string> onMeasureFailure, string[] context)
         {
-            
+
             if (context.Length == 0 || input == "")
             {
                 onMeasureFailure?.Invoke("No sentences to detect.");
@@ -32,7 +31,7 @@ namespace SentenceSimilarityUnity
         private static void ExecuteModelFromHuggingFaceAPI(string input, Action<float[]> onMeasureSuccess, Action<string> onMeasureFailure, string[] context)
         {
             HuggingFaceAPI.SentenceSimilarity(input, onMeasureSuccess, onMeasureFailure, context);
-      
+
         }
 
   #endregion
@@ -40,20 +39,14 @@ namespace SentenceSimilarityUnity
         // Sentence Similarity Model Run from Sentis
     #region Sentis
 
-        private static ModelAsset _modelAsset;
-        private static TextAsset _vocab;
-
         private static Worker _modelExecuteWorker; // Worker for executing the model
         private static Worker _scoreOpsWorker; // Worker for scoring operations
         private static Worker _poolingWorker; // Worker for pooling operations
 
-        private static string[] _vocabTokens; // Array of vocabulary tokens
-
         private const int START_TOKEN = 101; // Start token ID
         private const int END_TOKEN = 102; // End token ID
 
-
-        public static void MeasureSentenceAccuracyFromSentis(string input, Action<float[]> onMeasureSuccess, Action<string> onMeasureFailure, string[] context)
+        public static void MeasureSentenceAccuracyFromSentis(string input, Action<float[]> onMeasureSuccess, Action<string> onMeasureFailure, string[] context, ModelAsset modelAsset, string[] tokens)
         {
             if (context.Length == 0 || input == "")
             {
@@ -62,34 +55,27 @@ namespace SentenceSimilarityUnity
                 return;
             }
 
-            ExecuteModelFromSentis(input, onMeasureSuccess, onMeasureFailure, context);
+            ExecuteModelFromSentis(input, onMeasureSuccess, onMeasureFailure, context, modelAsset, tokens);
         }
 
 
         // Asynchronously executes the model with a given sentence and compares it against a list of sentences      
-        private static async void ExecuteModelFromSentis(string input, Action<float[]> onMeasureSuccess, Action<string> onMeasureFailure, string[] context)
+        private static async void ExecuteModelFromSentis(string input, Action<float[]> onMeasureSuccess, Action<string> onMeasureFailure, string[] context, ModelAsset modelAsset, string[] vocabTokens)
         {
             try
             {
                 DateTime startTime = DateTime.Now; // Timer Start
 
-                if (_vocabTokens == null)
-                {
-                    _modelAsset = Resources.Load<ModelAsset>("MiniLMv6");
-                    _vocab = Resources.Load<TextAsset>("vocab");
-                    SplitVocabTokens(_vocab); // Split vocabulary tokens if not already initialized
-                }
-
-                var model = ModelLoader.Load(_modelAsset);
+                var model = ModelLoader.Load(modelAsset);
                 _modelExecuteWorker = new Worker(model, GetBackendType());
-                
-                List<int> tokens1 = GetTokens(input); // Tokenize the input sentence
+
+                List<int> tokens1 = GetTokens(input, vocabTokens); // Tokenize the input sentence
                 using Tensor<float> embedding1 = await GetEmbeddingAsync(tokens1); // Get embedding for the first sentence
 
                 float[] results = new float[context.Length];
                 for (int i = 0; i < context.Length; i++)
                 {
-                    List<int> tokens2 = GetTokens(context[i]); // Tokenize each comparison sentence
+                    List<int> tokens2 = GetTokens(context[i], vocabTokens); // Tokenize each comparison sentence
                     using Tensor<float> embedding2 = await GetEmbeddingAsync(tokens2); // Get embedding for the comparison sentence
                     float accuracy = DotScore(embedding1, embedding2); // Calculate similarity score
                     results[i] = accuracy;
@@ -97,9 +83,9 @@ namespace SentenceSimilarityUnity
                 AllWorkerDispose();
 
                 onMeasureSuccess?.Invoke(results);
-          
-                DateTime endTime = DateTime.Now; 
-                TimeSpan duration = endTime - startTime; 
+
+                DateTime endTime = DateTime.Now;
+                TimeSpan duration = endTime - startTime;
                 Debug.Log($"ExecuteModelFromSentis Timer: {duration.Hours:D2}:{duration.Minutes:D2}:{duration.Seconds:D2}.{duration.Milliseconds:D3}");
 
             }
@@ -107,19 +93,6 @@ namespace SentenceSimilarityUnity
             {
                 onMeasureFailure?.Invoke(e.Message);
             }
-        }
-
-        // Splits the vocabulary asset into individual tokens
-        private static void SplitVocabTokens(TextAsset vocap)
-        {
-
-            _vocabTokens = vocap.text
-                .Split(new[] {
-                    '\n'
-                }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(line => line.Trim())
-                .Where(line => !string.IsNullOrWhiteSpace(line))
-                .ToArray();
         }
 
         // Calculates the dot product score between two tensors (used for similarity measurement)
@@ -158,7 +131,7 @@ namespace SentenceSimilarityUnity
         }
 
         // Converts a text input into a list of token IDs based on the vocabulary
-        private static List<int> GetTokens(string text)
+        private static List<int> GetTokens(string text, string[] vocabTokens)
         {
 
             string[] words = text.ToLower().Split(null);
@@ -175,7 +148,7 @@ namespace SentenceSimilarityUnity
                 for (int i = word.Length; i >= 0; i--)
                 {
                     string subword = start == 0 ? word.Substring(start, i) : "##" + word.Substring(start, i - start);
-                    int index = Array.IndexOf(_vocabTokens, subword);
+                    int index = Array.IndexOf(vocabTokens, subword);
                     if (index >= 0)
                     {
                         ids.Add(index);
