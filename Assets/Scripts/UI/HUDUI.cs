@@ -2,11 +2,10 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Threading.Tasks;
-using System.IO;
-using System.Collections.Generic;
 using System.Collections;
 using SpeechToTextUnity;
 using UnityEngine.Events;
+using DG.Tweening;
 
 public class HUDUI : MonoBehaviour
 {
@@ -27,16 +26,24 @@ public class HUDUI : MonoBehaviour
     [Header("Audio Input")]
     [SerializeField] private GameObject insertPhoto;
 
+    [Header("Input Panel")]
+    [SerializeField] private RectTransform inputPanel;
+    [SerializeField] private GameObject shortInputPanel;
+    [SerializeField] private Button inputPanelBtn;
+    [SerializeField] private Button shortInputPanelBtn;
+
     [Header("Output Panel")]
-    [SerializeField] private GameObject outputPanel;
+    [SerializeField] private RectTransform outputPanel;
+    [SerializeField] private Button outputPanelBtn;
     [SerializeField] private TextMeshProUGUI outputText;
     [SerializeField] private TextMeshProUGUI warningText;
 
-    private readonly HashSet<string> imageExtensions = new HashSet<string> { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
     private Coroutine fadeCor;
     private WaitForSeconds defaultSeconds = new WaitForSeconds(2f);
 
     public UnityEvent OnChangedCapturedImage;
+
+    private bool isOutputPanelUp = false;
 
     private void Start()
     {
@@ -48,6 +55,12 @@ public class HUDUI : MonoBehaviour
             audioInputButton.onClick.AddListener (() => ToggleInputMode(false));
         if (textInputEnterButton != null)
             textInputEnterButton.onClick.AddListener(OnClickTextInputEnterBtn);
+        if (inputPanelBtn != null)
+            inputPanelBtn.onClick.AddListener(SlideInputPanelLeft);
+        if (shortInputPanelBtn != null)
+            shortInputPanelBtn.onClick.AddListener(SlideInputPanelRight);
+        if (outputPanelBtn != null)
+            outputPanelBtn.onClick.AddListener(ToggleOutputPanel);
 
         if (textInputField != null)
             textInputField.onValueChanged.AddListener(OnTextInputValChanged);
@@ -75,15 +88,6 @@ public class HUDUI : MonoBehaviour
 
     private async Task CaptureImage()
     {
-        /*Method - Select Image File Directly
-        string filePath = FileSelector.FileSelect();
-        if (IsValidImageFormat(filePath))
-        {
-            MainController.Instance.CaptureImage(await AudioConvertor.LoadTexture(filePath));
-        }
-        else
-            Warning("Unsupported Image format");*/
-
         insertPhoto.SetActive(true);
 
         CameraCaptureSystem.Instance.Capture();
@@ -91,20 +95,6 @@ public class HUDUI : MonoBehaviour
         MainController.Instance.CaptureImage(await AudioConvertor.LoadTexture(filePath));
 
         OnChangedCapturedImage?.Invoke();
-    }
-
-    private bool IsValidImageFormat(string filePath)
-    {
-        if (filePath == null) 
-            return false;
-
-        string extension = Path.GetExtension(filePath);
-        if (!imageExtensions.Contains(extension))
-        {
-            Debug.LogWarning("Invalid File Extension: " + Path.GetExtension(filePath));
-            return false;
-        }
-         return true;
     }
 
     private void Warning(string warnText)
@@ -143,8 +133,49 @@ public class HUDUI : MonoBehaviour
     
     private void OnOutputChanged(string outputString)
     {
-        outputPanel.SetActive(true);
+        SlideOutputPanelUp();
         outputText.text = outputString;
     }
+
+    #region Panel
+    #region Input Panel
+    [ContextMenu("left")]
+    private void SlideInputPanelLeft()
+    {
+        Debug.Log("hi");
+        inputPanel.DOAnchorPos(new Vector3(-400, 0, 0), 1f).SetEase(Ease.InOutQuad).OnComplete(() => shortInputPanel.SetActive(true));      
+    }
+    [ContextMenu("right")]
+    private void SlideInputPanelRight()
+    {
+        shortInputPanel.SetActive(false);
+        inputPanel.DOAnchorPos(new Vector3(0, 0, 0), 1f).SetEase(Ease.InOutQuad);
+    }
+    #endregion
+
+    #region Output Panel
+    private void ToggleOutputPanel()
+    {
+        if (isOutputPanelUp)
+            SlideOutputPanelDown();
+        else
+            SlideOutputPanelUp();
+
+        isOutputPanelUp = !isOutputPanelUp;
+    }
+
+    private void SlideOutputPanelDown()
+    {
+        if (!isOutputPanelUp) return;
+        outputPanel.DOAnchorPos(new Vector3(0, -250, 0), 1f).SetEase(Ease.InOutQuad);
+    }
+
+    private void SlideOutputPanelUp()
+    {
+        if (isOutputPanelUp) return;
+        outputPanel.DOAnchorPos(new Vector3(0,0,0), 1f).SetEase(Ease.InOutQuad);
+    }
+    #endregion
+    #endregion
 }
 
