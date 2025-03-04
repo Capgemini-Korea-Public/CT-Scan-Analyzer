@@ -21,7 +21,7 @@ public class RotateCommand : ICommand
     {
         try
         {
-            rotationInformation = JsonUtility.FromJson<RotationInformation>(output);
+            rotationInformation = JsonExtension.DeserializeObject<RotationInformation>(output);
             rotationController.RotateSmooth(rotationInformation.direction, rotationInformation.angle);
         }
         catch (Exception e)
