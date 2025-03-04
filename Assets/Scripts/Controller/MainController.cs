@@ -98,17 +98,15 @@ public class MainController : MonoBehaviour
             Debug.LogWarning($"{command} not found");
             return;
         }
-        string input = similarityResult.enterdSentence + format;
+        string input = similarityResult.enterdSentence + CommandSystemManager.instance.GetInputFormat(command);
 
-        if (CurCapturedImages == null || command != "Diagnose")
-        {
-            Debug.Log("ddd");
+        if (CurCapturedImages == null || !isImageInserted)
             LLMOutputString = await LLMModule.Instance.Chat(input);
-        }
         else
         {
             Texture2D[] curImages = CurCapturedImages.ToArray();
             LLMOutputString = await LLMModule.Instance.Chat(input, curImages);
+            ResetSelectedImage();
         }
         OnLLMUpdated();
 

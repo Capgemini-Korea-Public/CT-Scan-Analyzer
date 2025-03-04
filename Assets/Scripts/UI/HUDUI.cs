@@ -63,7 +63,6 @@ public class HUDUI : MonoBehaviour
     private void OnClickTextInputEnterBtn()
     {
         MainController.Instance.ExecuteSentenceSimilarity(curInputText);
-        MainController.Instance.ResetSelectedImage();
     }
 
     private void OnTextInputValChanged(string value)
