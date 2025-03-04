@@ -26,6 +26,8 @@ public class MainController : MonoBehaviour
 
     public event Action<string> OnLLMResponseUpdated;
 
+    [SerializeField] private bool isImageInserted;
+
     private void Awake()
     {
         if (instance == null)
@@ -53,11 +55,11 @@ public class MainController : MonoBehaviour
     /// <summary>
     /// A method that asks an LLM for an image or text.
     /// </summary>
-    public void  ExecuteSentenceSimilarity(string inputText)
+    public void ExecuteSentenceSimilarity(string inputText)
     {
         SentenceSimilarityController.Instance.MeasureSentenceAccuracy(inputText);
     }
-    
+
     /// <summary>
     /// A method to reset the selected image.
     /// </summary>
@@ -106,7 +108,15 @@ public class MainController : MonoBehaviour
             LLMOutputString = await LLMModule.Instance.Chat(input, curImages);
         }
         OnLLMUpdated();
-        
+
         CommandSystemManager.instance.ExecuteCommand(command, LLMOutputString);
+    }
+
+    /// <summary>
+    /// A method Image Inserted bool variable 
+    /// </summary>
+    public void SetImageInserted(bool b)
+    {
+        isImageInserted = b;
     }
 }
