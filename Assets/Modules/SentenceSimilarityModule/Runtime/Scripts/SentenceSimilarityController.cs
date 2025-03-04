@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using SentenceSimilarityUnity;
+using Unity.Sentis;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -40,8 +43,11 @@ public class SentenceSimilarityController : MonoBehaviour
 
     private bool isExecute;
     private Rake rakeAlgorithm;
-    //private SentenceSaveSystem saveSystem;
-    
+
+    private ModelAsset modelAsset;
+    private TextAsset vocab;
+    private string[] vocabTokens;
+    private Dictionary<string, List<int>> commandTokens = new Dictionary<string, List<int>>();
     private void Awake()
     {
         if (instance == null)
@@ -54,8 +60,25 @@ public class SentenceSimilarityController : MonoBehaviour
         }
 
         rakeAlgorithm = new Rake();
-        // saveSystem = new SentenceSaveSystem();
-        // sentenceList = saveSystem.LoadSentences();
+        LoadModelAsset();
+    }
+
+    private void LoadModelAsset()
+    {
+        modelAsset = Resources.Load<ModelAsset>("MiniLMv6");
+        vocab = Resources.Load<TextAsset>("vocab");
+        SplitVocabTokens(vocab); // Split vocabulary tokens if not already initialized
+    }
+
+    private void SplitVocabTokens(TextAsset vocap)
+    {
+        vocabTokens = vocap.text
+            .Split(new[] {
+                '\n'
+            }, StringSplitOptions.RemoveEmptyEntries)
+            .Select(line => line.Trim())
+            .Where(line => !string.IsNullOrWhiteSpace(line))
+            .ToArray();
     }
 
     public void MeasureSentenceAccuracy(string input)
@@ -91,11 +114,9 @@ public class SentenceSimilarityController : MonoBehaviour
                 filteredSentenceList.Add(sentence);
             }
         }
-
+        
         if (filteredSentenceList.Count == 0)
-        {
             filteredSentenceList = new List<string>(SentenceList);
-        }
 
         OnMeasureBeginEvent?.Invoke();
         isExecute = true;
@@ -105,10 +126,16 @@ public class SentenceSimilarityController : MonoBehaviour
             SentenceSimilarityModule.MeasureSentenceAccuracyFromAPI
                 (positiveSentence, MeasureSuccess, MeasureFailure, filteredSentenceList.ToArray());
         else
+        {
+            Dictionary<string, List<int>> tokens = new Dictionary<string, List<int>>();
+            foreach (var sentence in filteredSentenceList)
+            {
+                tokens[sentence] = commandTokens[sentence];
+            }
             SentenceSimilarityModule.MeasureSentenceAccuracyFromSentis
-                (positiveSentence, MeasureSuccess, MeasureFailure, filteredSentenceList.ToArray());
+                (GetTokens(StringUtility.NormalizeText(positiveSentence)), MeasureSuccess, MeasureFailure, tokens, modelAsset);
+        }
     }
-
 
     #region Events
 
@@ -116,9 +143,10 @@ public class SentenceSimilarityController : MonoBehaviour
     {
         if (maxSentenceCount > SentenceCount && !sentenceList.Contains(input))
         {
-            OnSentenceRegisterSuccessEvent?.Invoke(input);
-            sentenceList.Add(input);
-           // await saveSystem.SaveSentencesAsync(sentenceList);
+            var processedKey = StringUtility.NormalizeText(input);
+            OnSentenceRegisterSuccessEvent?.Invoke(processedKey);
+            commandTokens.Add(processedKey, GetTokens(processedKey));
+            sentenceList.Add(processedKey);
         }
         else
         {
@@ -129,15 +157,16 @@ public class SentenceSimilarityController : MonoBehaviour
 
     public async void DeleteSentence(string input)
     {
-        if (!sentenceList.Contains(input))
+        var processedKey = StringUtility.NormalizeText(input);
+        if (!sentenceList.Contains(processedKey))
         {
-            Debug.LogError($"Sentence => {input} does not exist");
+            Debug.LogError($"Sentence => {processedKey} does not exist");
             return;
         }
 
-        sentenceList.Remove(input);
+        sentenceList.Remove(processedKey);
+        commandTokens.Remove(processedKey);
         OnSentenceDeleteEvent?.Invoke();
-       // await saveSystem.SaveSentencesAsync(sentenceList);
     }
 
     private void MeasureFailure(string message)
@@ -152,7 +181,7 @@ public class SentenceSimilarityController : MonoBehaviour
         SimilarityResult[] results = new SimilarityResult[accuracy.Length];
 
         // 가중치와 유사도를 조합한 최종 점수 계산을 위한 변수들
-        float maxWeight = 0f; 
+        float maxWeight = 0f;
         float maxAccuracy = 0f;
 
         // 최대값 찾기(정규화 목적)
@@ -185,7 +214,6 @@ public class SentenceSimilarityController : MonoBehaviour
 
         // 최종 점수에 따라 결과 정렬
         Array.Sort(results, (a, b) => b.accuracy.CompareTo(a.accuracy));
-
         if (results[0].accuracy >= similarityThreshold) // 유사한 커맨드
         {
             results[0].enterdSentence = enteredSentence;
@@ -201,15 +229,36 @@ public class SentenceSimilarityController : MonoBehaviour
 
 #endregion
 
-    // [ContextMenu("Delete All Sentences")]
-    // private void DeleteAllSentenceData()
-    // {
-    //     if (saveSystem == null)
-    //         saveSystem = new SentenceSaveSystem();
-    //
-    //     saveSystem.DeleteAllData();
-    // }
+    private const int START_TOKEN = 101; // Start token ID
+    private const int END_TOKEN = 102; // End token ID
+    private List<int> GetTokens(string text)
+    {
+        string[] words = text.ToLower().Split(null);
+        var ids = new List<int> {START_TOKEN};
+        var sb = new StringBuilder();
 
+        foreach (var word in words)
+        {
+            int start = 0;
+            for (int i = word.Length; i >= 0; i--)
+            {
+                string subword = start == 0 ? word.Substring(start, i) : "##" + word.Substring(start, i - start);
+                int index = Array.IndexOf(vocabTokens, subword);
+                if (index >= 0)
+                {
+                    ids.Add(index);
+                    sb.Append(subword).Append(' ');
+                    if (i == word.Length) break;
+                    start = i;
+                    i = word.Length + 1;
+                }
+            }
+        }
+
+        ids.Add(END_TOKEN);
+        Debug.Log($"Tokenized sentence = {sb.ToString().Trim()}");
+        return ids;
+    }
 }
 
 
