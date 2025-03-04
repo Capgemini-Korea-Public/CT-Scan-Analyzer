@@ -1126,9 +1126,9 @@ GameObject:
   - component: {fileID: 4176476286561111354}
   - component: {fileID: 4252875881797766269}
   - component: {fileID: 3170616957486858051}
-  m_Layer: 6
+  m_Layer: 3
   m_Name: Slice Camera
-  m_TagString: Untagged
+  m_TagString: SliceCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

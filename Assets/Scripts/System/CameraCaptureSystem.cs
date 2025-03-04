@@ -21,13 +21,15 @@ public class CameraCaptureSystem : MonoBehaviour
         else
         {
             Destroy(gameObject);
-        }
-        
+        }    
     }
+
     private void Start()
     {
+        CaptureCamera = GameObject.FindGameObjectWithTag("SliceCamera").GetComponent<Camera>();
         CapturedImageSavePath = Path.Combine(Application.persistentDataPath, "CapturedImage.png");
     }
+
 
     [ContextMenu("Capture")]
     public void Capture()
