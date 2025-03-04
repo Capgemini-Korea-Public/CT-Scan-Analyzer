@@ -60,6 +60,8 @@ public class SentenceSimilarityController : MonoBehaviour
 
     public void MeasureSentenceAccuracy(string input)
     {
+        activateType = MainController.Instance.SentenceSimilarityModelType;
+
         if (isExecute)
         {
             MeasureFailure("Model is executing.");
@@ -142,6 +144,7 @@ public class SentenceSimilarityController : MonoBehaviour
     {
         OnMeasureFailEvent?.Invoke();
         Debug.LogError($"Detect Fail! \n{message}");
+        isExecute = false;
     }
 
     private void MeasureSuccess(float[] accuracy)
