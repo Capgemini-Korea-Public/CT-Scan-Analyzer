@@ -9,9 +9,10 @@ public class ZoomCommand : ICommand
     private CameraOrthoZoomController orthoZoomController;
     private ZoomInformation zoomInfo;
 
-    public ZoomCommand(CameraFovController cameraFovController)
+    public ZoomCommand(CameraFovController cameraFovController, CameraOrthoZoomController cameraOrthoZoomController)
     {
         fovController = cameraFovController;
+        orthoZoomController = cameraOrthoZoomController;
         zoomInfo = new ZoomInformation();
         CommandSystemManager.instance.RegisterCommand(CommandName, this);
     }
@@ -20,7 +21,7 @@ public class ZoomCommand : ICommand
     {
         try
         {
-            zoomInfo = JsonUtility.FromJson<ZoomInformation>(output);
+            zoomInfo = JsonExtension.DeserializeObject<ZoomInformation>(output);
             if(zoomInfo.cameraType.ToLower() == "fov")
             {
                 fovController.SmoothZoom(zoomInfo.command, zoomInfo.percent);
