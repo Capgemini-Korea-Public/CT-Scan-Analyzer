@@ -31,13 +31,33 @@ public class LocalhostAPIAdaptor : ILLMService
         return res;
     }
 
-    public Task<string> Chat(string inputText, Texture2D inputImage)
+    public async Task<string> Chat(string inputText, Texture2D inputImage)
     {
-        throw new System.NotImplementedException();
+        Debug.Log("Ollama Start");
+        await Task.Run(async () =>
+            await Ollama.ChatStream((string text) => buffer.Enqueue(text), model, inputText, inputImage)
+        );
+
+        string res = string.Empty;
+        while (buffer.Count > 0)
+            res += buffer.Dequeue();
+
+        Debug.Log(res);
+        return res;
     }
 
-    public Task<string> Chat(string inputText, Texture2D[] inputImages)
+    public async Task<string> Chat(string inputText, Texture2D[] inputImages)
     {
-        throw new System.NotImplementedException();
+        Debug.Log("Ollama Start");
+        await Task.Run(async () =>
+            await Ollama.ChatStream((string text) => buffer.Enqueue(text), model, inputText, inputImages[0])
+        );
+
+        string res = string.Empty;
+        while (buffer.Count > 0)
+            res += buffer.Dequeue();
+
+        Debug.Log(res);
+        return res;
     }
 }
