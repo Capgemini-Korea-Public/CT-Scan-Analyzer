@@ -43,5 +43,8 @@ public class VTKUIController : MonoBehaviour
     {
         if (vtkSceneObject != null)
             vtkSceneObject.Orientation = (VTKSceneObject.SliceOrientation)value;
+
+        slider.value = 0;
+        sliderValText.text = 0.ToString("F2");
     }
 }
