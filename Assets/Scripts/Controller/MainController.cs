@@ -100,12 +100,13 @@ public class MainController : MonoBehaviour
         }
         string input = similarityResult.enterdSentence + CommandSystemManager.instance.GetInputFormat(command);
 
-        if (CurCapturedImages == null)
+        if (CurCapturedImages == null || !isImageInserted)
             LLMOutputString = await LLMModule.Instance.Chat(input);
         else
         {
             Texture2D[] curImages = CurCapturedImages.ToArray();
             LLMOutputString = await LLMModule.Instance.Chat(input, curImages);
+            ResetSelectedImage();
         }
         OnLLMUpdated();
 

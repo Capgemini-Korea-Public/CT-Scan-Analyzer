@@ -79,7 +79,6 @@ public class AudioRecorderUI : MonoBehaviour
     private void OnSTTEnterButtonClicked()
     {
         _ = SttToSentenceSimilarity();
-        MainController.Instance.ResetSelectedImage();
     }
 
     private async Task SttToSentenceSimilarity()

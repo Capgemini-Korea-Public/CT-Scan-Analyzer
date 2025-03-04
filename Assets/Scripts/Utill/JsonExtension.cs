@@ -1,5 +1,4 @@
 using System;
-using Newtonsoft.Json;
 using UnityEngine;
 using System.Text.RegularExpressions;
 
@@ -25,7 +24,7 @@ public static class JsonExtension
             if (match.Success)
             {
                 json = match.Value;
-            }
+            }  
 
             return JsonUtility.FromJson<T>(json);
         }
