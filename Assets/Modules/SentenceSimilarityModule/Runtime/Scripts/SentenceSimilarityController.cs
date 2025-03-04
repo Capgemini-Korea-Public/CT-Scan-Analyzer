@@ -114,7 +114,7 @@ public class SentenceSimilarityController : MonoBehaviour
                 filteredSentenceList.Add(sentence);
             }
         }
-
+        
         if (filteredSentenceList.Count == 0)
             filteredSentenceList = new List<string>(SentenceList);
 
@@ -133,7 +133,7 @@ public class SentenceSimilarityController : MonoBehaviour
                 tokens[sentence] = commandTokens[sentence];
             }
             SentenceSimilarityModule.MeasureSentenceAccuracyFromSentis
-                (GetTokens(positiveSentence), MeasureSuccess, MeasureFailure, tokens, modelAsset);
+                (GetTokens(StringUtility.NormalizeText(positiveSentence)), MeasureSuccess, MeasureFailure, tokens, modelAsset);
         }
     }
 
@@ -143,9 +143,10 @@ public class SentenceSimilarityController : MonoBehaviour
     {
         if (maxSentenceCount > SentenceCount && !sentenceList.Contains(input))
         {
-            OnSentenceRegisterSuccessEvent?.Invoke(input);
-            commandTokens.Add(input, GetTokens(input));
-            sentenceList.Add(input);
+            var processedKey = StringUtility.NormalizeText(input);
+            OnSentenceRegisterSuccessEvent?.Invoke(processedKey);
+            commandTokens.Add(processedKey, GetTokens(processedKey));
+            sentenceList.Add(processedKey);
         }
         else
         {
@@ -156,14 +157,15 @@ public class SentenceSimilarityController : MonoBehaviour
 
     public async void DeleteSentence(string input)
     {
-        if (!sentenceList.Contains(input))
+        var processedKey = StringUtility.NormalizeText(input);
+        if (!sentenceList.Contains(processedKey))
         {
-            Debug.LogError($"Sentence => {input} does not exist");
+            Debug.LogError($"Sentence => {processedKey} does not exist");
             return;
         }
 
-        sentenceList.Remove(input);
-        commandTokens.Remove(input);
+        sentenceList.Remove(processedKey);
+        commandTokens.Remove(processedKey);
         OnSentenceDeleteEvent?.Invoke();
     }
 
@@ -212,7 +214,6 @@ public class SentenceSimilarityController : MonoBehaviour
 
         // 최종 점수에 따라 결과 정렬
         Array.Sort(results, (a, b) => b.accuracy.CompareTo(a.accuracy));
-        Debug.Log(results[0].sentence + "\n" + results[0].accuracy);
         if (results[0].accuracy >= similarityThreshold) // 유사한 커맨드
         {
             results[0].enterdSentence = enteredSentence;

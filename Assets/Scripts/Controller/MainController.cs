@@ -100,7 +100,7 @@ public class MainController : MonoBehaviour
         }
         string input = similarityResult.enterdSentence + CommandSystemManager.instance.GetInputFormat(command);
 
-        if (CurCapturedImages == null || !isImageInserted || command != "Diagnose")
+        if (CurCapturedImages == null || !isImageInserted || command != "diagnose")
             LLMOutputString = await LLMModule.Instance.Chat(input);
         else
         {
