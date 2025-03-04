@@ -103,87 +103,89 @@ public class CameraRotationController : MonoBehaviour
             }
             if (isRotating) return;
 
-            float rotationAngle = angle.Value;
-            Vector3 axis = Vector3.up;
+            float deltaAngle = angle.Value;
+            // 여기서는 실제 현재 상태를 반영하기 위해, GetCurrentYawPitch()를 사용합니다.
+            float currentYaw, currentPitch;
+            GetCurrentYawPitch(out currentYaw, out currentPitch);
+
+            float targetYaw = currentYaw;
+            float targetPitch = currentPitch;
+
             switch (direction.ToLower())
             {
                 case "left":
-                    axis = Vector3.up;
-                    rotationAngle = Mathf.Abs(rotationAngle);
+                    targetYaw += Mathf.Abs(deltaAngle);
                     break;
                 case "right":
-                    axis = Vector3.up;
-                    rotationAngle = -Mathf.Abs(rotationAngle);
+                    targetYaw -= Mathf.Abs(deltaAngle);
                     break;
                 case "up":
-                    axis = transform.right;
-                    rotationAngle = Mathf.Abs(rotationAngle);
+                    targetPitch = Mathf.Clamp(currentPitch + Mathf.Abs(deltaAngle), -80f, 80f);
                     break;
                 case "down":
-                    axis = transform.right;
-                    rotationAngle = -Mathf.Abs(rotationAngle);
-                    break;
-                case "none":
-                    axis = transform.right;
-                    rotationAngle = -Mathf.Abs(rotationAngle);
-                    Debug.LogWarning("사방 외 방향 명령으로 기본 값 적용");
+                    targetPitch = Mathf.Clamp(currentPitch - Mathf.Abs(deltaAngle), -80f, 80f);
                     break;
                 default:
                     Debug.LogWarning("알 수 없는 회전 명령: " + direction);
                     return;
             }
-            StartCoroutine(RotateCoroutine(rotationAngle, axis));
+            StartCoroutine(RotateCoroutine(targetYaw, targetPitch));
         }
     }
 
-    IEnumerator RotateCoroutine(float rotationAngle, Vector3 axis)
+    // 현재 카메라의 실제 회전에서 yaw와 pitch를 추출하는 함수 (간단한 예시)
+    private void GetCurrentYawPitch(out float currentYaw, out float currentPitch)
+    {
+        // transform.rotation을 EulerAngles로 변환하면, 회전값을 얻을 수 있습니다.
+        Vector3 euler = transform.rotation.eulerAngles;
+        // Unity의 EulerAngles는 0~360 범위이므로, -180~180 범위로 변환해주면 보간이 자연스럽습니다.
+        currentYaw = euler.y > 180 ? euler.y - 360 : euler.y;
+        currentPitch = euler.x > 180 ? euler.x - 360 : euler.x;
+    }
+
+    IEnumerator RotateCoroutine(float targetYaw, float targetPitch)
     {
         isRotating = true;
-        Quaternion startRot = transform.rotation;
-        Quaternion endRot = Quaternion.AngleAxis(rotationAngle, axis) * startRot;
-
-        // 현재 target과의 오프셋 저장
-        Vector3 startOffset = transform.position - target.position;
+        // 시작 시점의 실제 yaw, pitch 추출
+        float startYaw, startPitch;
+        GetCurrentYawPitch(out startYaw, out startPitch);
 
         float t = 0f;
         while (t < rotationDuration)
         {
             t += Time.deltaTime;
             float progress = t / rotationDuration;
+            float currentYaw = Mathf.Lerp(startYaw, targetYaw, progress);
+            float currentPitch = Mathf.Lerp(startPitch, targetPitch, progress);
 
-            // 회전 보간
-            Quaternion currentRot = Quaternion.Slerp(startRot, endRot, progress);
-            // 초기 오프셋을 startRot 기준에서 currentRot으로 회전시켜 새로운 offset 계산
-            Vector3 newOffset = currentRot * (Quaternion.Inverse(startRot) * startOffset);
+            // 보간된 yaw, pitch를 기반으로 회전 쿼터니언 생성 (여기서는 Vector3.right 대신 고정 축 사용)
+            Quaternion currentRotation = Quaternion.Euler(currentPitch, currentYaw, 0f);
 
-            // 새로운 위치를 계산하여 업데이트
+            Vector3 newOffset = currentRotation * new Vector3(0, 0, -initialDistance);
             transform.position = target.position + newOffset;
-            // 항상 target을 바라보도록
-            transform.LookAt(target.position, Vector3.up);
+            transform.rotation = Quaternion.LookRotation(target.position - transform.position, Vector3.up);
             yield return null;
         }
-
         // 최종 상태 적용
-        transform.position = target.position + endRot * (Quaternion.Inverse(startRot) * startOffset);
-        transform.rotation = endRot;
-        transform.LookAt(target.position, Vector3.up);
+        Quaternion finalRotation = Quaternion.Euler(targetPitch, targetYaw, 0f);
+        transform.position = target.position + finalRotation * new Vector3(0, 0, -initialDistance);
+        transform.rotation = Quaternion.LookRotation(target.position - transform.position, Vector3.up);
         isRotating = false;
     }
 
 
+
+
     IEnumerator ContinuousRotation()
     {
-        // 초기 오프셋 계산
+        // 초기 오프셋 기반: r, φ, θ 계산
         Vector3 offset = transform.position - target.position;
         float r = offset.magnitude;
-        // φ: 폴라 각도, 0~π (0: target 바로 위, π: target 바로 아래)
-        float phi = Mathf.Acos(offset.y / r);
-        // θ: 아지무스 각도, XZ 평면에서의 각도 (기준: Z축)
-        float theta = Mathf.Atan2(offset.x, offset.z);
+        float phi = Mathf.Acos(offset.y / r); // 폴라 각도 (0: target 바로 위, π: target 바로 아래)
+        float theta = Mathf.Atan2(offset.x, offset.z); // 아지무스 각도 (XZ 평면, Z축 기준)
 
         while (true)
         {
-            // 만약 새 방향 명령이 들어오면 currentContinuousDirection가 업데이트되어 반영됩니다.
             switch (currentContinuousDirection)
             {
                 case "left":
@@ -201,16 +203,13 @@ public class CameraRotationController : MonoBehaviour
                 default:
                     break;
             }
-
-            // 클램핑: φ를 10° ~ 170° (라디안: 10°≈0.175, 170°≈2.967)
+            // 클램핑: φ를 10° ~ 170°로 제한 (즉, 피치가 -80° ~ 80°로 유지)
             float minPhi = 10f * Mathf.Deg2Rad;
             float maxPhi = 170f * Mathf.Deg2Rad;
             phi = Mathf.Clamp(phi, minPhi, maxPhi);
 
-            // θ는 0~2π로 반복
             theta = Mathf.Repeat(theta, 2 * Mathf.PI);
 
-            // 구면 좌표 -> 데카르트 좌표 변환
             float sinPhi = Mathf.Sin(phi);
             float cosPhi = Mathf.Cos(phi);
             float sinTheta = Mathf.Sin(theta);
@@ -262,9 +261,8 @@ public class CameraRotationController : MonoBehaviour
         yaw = initialYaw;
         pitch = initialPitch;
         Vector3 offset = new Vector3(0, 0, -initialDistance);
-        // yaw 먼저, 그 다음 pitch
         Quaternion qYaw = Quaternion.AngleAxis(yaw, Vector3.up);
-        Quaternion qPitch = Quaternion.AngleAxis(pitch, Vector3.right);
+        Quaternion qPitch = Quaternion.AngleAxis(pitch, transform.right);
         Quaternion rotation = qYaw * qPitch;
         transform.position = target.position + rotation * offset;
         transform.rotation = Quaternion.LookRotation(target.position - transform.position, Vector3.up);
