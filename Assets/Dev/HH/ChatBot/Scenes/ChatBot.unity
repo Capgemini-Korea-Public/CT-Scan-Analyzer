@@ -1427,7 +1427,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf56900766959154f858093b57bbf359, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputImage: {fileID: 2800000, guid: 58e2bd28b1ced254f850df9825c3b9ca, type: 3}
+  inputImages: []
   textBox: {fileID: 833694247}
 --- !u!1 &1392351315
 GameObject:
@@ -1832,11 +1832,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0293cd018382e34082ae9052a06fd2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  apiType: 1
+  apiType: 2
   llm: {fileID: 0}
   llmCharacter: {fileID: 0}
   LocalhostModel: llama3:latest
-  selectedModelIndex: 0
+  selectedModelIndex: 1
 --- !u!1 &1557290120
 GameObject:
   m_ObjectHideFlags: 0
