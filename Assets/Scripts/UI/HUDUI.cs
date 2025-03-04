@@ -42,6 +42,7 @@ public class HUDUI : MonoBehaviour
     private WaitForSeconds defaultSeconds = new WaitForSeconds(2f);
 
     public UnityEvent OnChangedCapturedImage;
+    public UnityEvent OnHideImage;
 
     private bool isOutputPanelUp = false;
 
@@ -139,13 +140,12 @@ public class HUDUI : MonoBehaviour
 
     #region Panel
     #region Input Panel
-    [ContextMenu("left")]
     private void SlideInputPanelLeft()
     {
-        Debug.Log("hi");
-        inputPanel.DOAnchorPos(new Vector3(-400, 0, 0), 1f).SetEase(Ease.InOutQuad).OnComplete(() => shortInputPanel.SetActive(true));      
+        inputPanel.DOAnchorPos(new Vector3(-400, 0, 0), 1f).SetEase(Ease.InOutQuad).OnComplete(() => shortInputPanel.SetActive(true));
+        OnHideImage?.Invoke();
     }
-    [ContextMenu("right")]
+
     private void SlideInputPanelRight()
     {
         shortInputPanel.SetActive(false);
@@ -167,7 +167,7 @@ public class HUDUI : MonoBehaviour
     private void SlideOutputPanelDown()
     {
         if (!isOutputPanelUp) return;
-        outputPanel.DOAnchorPos(new Vector3(0, -250, 0), 1f).SetEase(Ease.InOutQuad);
+        outputPanel.DOAnchorPos(new Vector3(0, -350, 0), 1f).SetEase(Ease.InOutQuad);
     }
 
     private void SlideOutputPanelUp()
