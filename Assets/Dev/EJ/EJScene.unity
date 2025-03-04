@@ -207,6 +207,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 222942086892134213, guid: 3ff64638c27625841926eeaa59bb4394,
+        type: 3}
+      propertyPath: rotationController
+      value: 
+      objectReference: {fileID: 8415617210142039420}
     - target: {fileID: 1481078350986915659, guid: 3ff64638c27625841926eeaa59bb4394,
         type: 3}
       propertyPath: m_LocalPosition.x

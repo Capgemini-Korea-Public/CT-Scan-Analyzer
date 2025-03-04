@@ -39,8 +39,8 @@ public class SentenceSimilarityController : MonoBehaviour
     private Dictionary<string, float> weightDictionary = new Dictionary<string, float>();
 
     private bool isExecute;
-    private SentenceSaveSystem saveSystem;
     private Rake rakeAlgorithm;
+    //private SentenceSaveSystem saveSystem;
     
     private void Awake()
     {
@@ -54,8 +54,8 @@ public class SentenceSimilarityController : MonoBehaviour
         }
 
         rakeAlgorithm = new Rake();
-        saveSystem = new SentenceSaveSystem();
-        sentenceList = saveSystem.LoadSentences();
+        // saveSystem = new SentenceSaveSystem();
+        // sentenceList = saveSystem.LoadSentences();
     }
 
     public void MeasureSentenceAccuracy(string input)
@@ -118,7 +118,7 @@ public class SentenceSimilarityController : MonoBehaviour
         {
             OnSentenceRegisterSuccessEvent?.Invoke(input);
             sentenceList.Add(input);
-            await saveSystem.SaveSentencesAsync(sentenceList);
+           // await saveSystem.SaveSentencesAsync(sentenceList);
         }
         else
         {
@@ -137,7 +137,7 @@ public class SentenceSimilarityController : MonoBehaviour
 
         sentenceList.Remove(input);
         OnSentenceDeleteEvent?.Invoke();
-        await saveSystem.SaveSentencesAsync(sentenceList);
+       // await saveSystem.SaveSentencesAsync(sentenceList);
     }
 
     private void MeasureFailure(string message)
@@ -201,14 +201,14 @@ public class SentenceSimilarityController : MonoBehaviour
 
 #endregion
 
-    [ContextMenu("Delete All Sentences")]
-    private void DeleteAllSentenceData()
-    {
-        if (saveSystem == null)
-            saveSystem = new SentenceSaveSystem();
-
-        saveSystem.DeleteAllData();
-    }
+    // [ContextMenu("Delete All Sentences")]
+    // private void DeleteAllSentenceData()
+    // {
+    //     if (saveSystem == null)
+    //         saveSystem = new SentenceSaveSystem();
+    //
+    //     saveSystem.DeleteAllData();
+    // }
 
 }
 
