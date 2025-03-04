@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Collections.Generic;
 using System.Collections;
-using OpenAI;
 using SpeechToTextUnity;
 
 public class HUDUI : MonoBehaviour
@@ -23,6 +22,9 @@ public class HUDUI : MonoBehaviour
     [Header("Audio Input")]
     [SerializeField] private GameObject audioInput;
     [SerializeField] private Button audioInputButton;
+
+    [Header("Audio Input")]
+    [SerializeField] private GameObject insertPhoto;
 
     [Header("Output Panel")]
     [SerializeField] private GameObject outputPanel;
@@ -71,14 +73,16 @@ public class HUDUI : MonoBehaviour
 
     private async Task CaptureImage()
     {
-        // Method - Select Image File Directly
-        //string filePath = FileSelector.FileSelect();
-        //if (IsValidImageFormat(filePath))
-        //{
-        //    MainController.Instance.CaptureImage(await AudioConvertor.LoadTexture(filePath));
-        //}
-        //else
-        //    Warning("Unsupported Image format");
+        /*Method - Select Image File Directly
+        string filePath = FileSelector.FileSelect();
+        if (IsValidImageFormat(filePath))
+        {
+            MainController.Instance.CaptureImage(await AudioConvertor.LoadTexture(filePath));
+        }
+        else
+            Warning("Unsupported Image format");*/
+
+        insertPhoto.SetActive(true);
 
         CameraCaptureSystem.Instance.Capture();
         string filePath = CameraCaptureSystem.Instance.CapturedImageSavePath;

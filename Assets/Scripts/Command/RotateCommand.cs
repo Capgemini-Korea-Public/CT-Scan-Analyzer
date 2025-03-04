@@ -13,6 +13,10 @@ public class RotateCommand : ICommand
     {
         targetTransform = target;
         rotationController = targetTransform.GetComponent<CameraRotationController>();
+        if (rotationController != null)
+        {
+            Debug.Log("rotation Controller is null!!");
+        }
         CommandSystemManager.instance.RegisterCommand(CommandName, this);
         rotationInformation = new RotationInformation();
     }
@@ -26,7 +30,7 @@ public class RotateCommand : ICommand
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            Debug.LogError(e);
             throw;
         }
     }
@@ -34,6 +38,7 @@ public class RotateCommand : ICommand
     public string GetInputFormat()
     {
         string message = MessageFormat + JsonUtility.ToJson(rotationInformation);
+        Debug.Log(message);
         return message;
     }
 }

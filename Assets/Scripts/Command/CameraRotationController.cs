@@ -142,25 +142,34 @@ public class CameraRotationController : MonoBehaviour
         Quaternion startRot = transform.rotation;
         Quaternion endRot = Quaternion.AngleAxis(rotationAngle, axis) * startRot;
 
+        // 현재 target과의 오프셋 저장
+        Vector3 startOffset = transform.position - target.position;
+
         float t = 0f;
         while (t < rotationDuration)
         {
             t += Time.deltaTime;
             float progress = t / rotationDuration;
-            transform.rotation = Quaternion.Slerp(startRot, endRot, progress);
-            if (target != null)
-            {
-                transform.LookAt(target.position, Vector3.up);
-            }
+
+            // 회전 보간
+            Quaternion currentRot = Quaternion.Slerp(startRot, endRot, progress);
+            // 초기 오프셋을 startRot 기준에서 currentRot으로 회전시켜 새로운 offset 계산
+            Vector3 newOffset = currentRot * (Quaternion.Inverse(startRot) * startOffset);
+
+            // 새로운 위치를 계산하여 업데이트
+            transform.position = target.position + newOffset;
+            // 항상 target을 바라보도록
+            transform.LookAt(target.position, Vector3.up);
             yield return null;
         }
+
+        // 최종 상태 적용
+        transform.position = target.position + endRot * (Quaternion.Inverse(startRot) * startOffset);
         transform.rotation = endRot;
-        if (target != null)
-        {
-            transform.LookAt(target.position, Vector3.up);
-        }
+        transform.LookAt(target.position, Vector3.up);
         isRotating = false;
     }
+
 
     IEnumerator ContinuousRotation()
     {
