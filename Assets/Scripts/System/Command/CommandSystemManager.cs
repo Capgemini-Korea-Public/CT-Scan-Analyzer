@@ -14,15 +14,17 @@ public class CommandSystemManager : MonoBehaviour
     }
     public void RegisterCommand(string input, ICommand command)
     {
-        commandDict[input] = command;
-        SentenceSimilarityController.Instance.RegisterSentence(input);
+        string str = StringUtility.NormalizeText(input);
+        commandDict[str] = command;
+        SentenceSimilarityController.Instance.RegisterSentence(str);
     }
 
     public void ExecuteCommand(string input, string sentence)
     {
-        if (commandDict.ContainsKey(input))
+        string str = StringUtility.NormalizeText(input);
+        if (commandDict.ContainsKey(str))
         {
-            commandDict[input].Execute(sentence);
+            commandDict[str].Execute(sentence);
         }
     }
 
