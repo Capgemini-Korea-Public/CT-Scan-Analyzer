@@ -15,7 +15,7 @@ public class CommandExample : MonoBehaviour
     {
         diagnoseCommand = new DiagnoseCommand();
         _rotateCommand = new RotateCommand(rotationController.transform);
-        _zoomCommand = new ZoomCommand(fovController);
+        _zoomCommand = new ZoomCommand(fovController, orthoZoomController);
         _cameraResetCommand = new CameraResetCommand(rotationController, fovController, orthoZoomController);
     }
 
