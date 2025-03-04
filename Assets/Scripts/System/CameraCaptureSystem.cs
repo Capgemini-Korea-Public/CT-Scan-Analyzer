@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.IO;
 using System;
-using System.Threading.Tasks;
 
 public class CameraCaptureSystem : MonoBehaviour
 {
@@ -54,7 +53,7 @@ public class CameraCaptureSystem : MonoBehaviour
         RenderTexture.active = null;
         Destroy(rt);
 
-        byte[] bytes = screenShot.EncodeToPNG();
+        byte[] bytes = screenShot.EncodeToJPG(80); 
         File.WriteAllBytes(CapturedImageSavePath, bytes);
 
         Debug.Log("Screenshot saved: " + CapturedImageSavePath);
