@@ -46,21 +46,21 @@ namespace SentenceSimilarityUnity
         private const int START_TOKEN = 101; // Start token ID
         private const int END_TOKEN = 102; // End token ID
 
-        public static void MeasureSentenceAccuracyFromSentis(string input, Action<float[]> onMeasureSuccess, Action<string> onMeasureFailure, string[] context, ModelAsset modelAsset, string[] tokens)
+        public static void MeasureSentenceAccuracyFromSentis(List<int> inputTokens, Action<float[]> onMeasureSuccess, Action<string> onMeasureFailure, Dictionary<string, List<int>> commandTokens, ModelAsset modelAsset)
         {
-            if (context.Length == 0 || input == "")
+            if (commandTokens.Count == 0)
             {
                 onMeasureFailure?.Invoke("No sentences to detect.");
                 Debug.LogWarning("No sentences to detect.");
                 return;
             }
 
-            ExecuteModelFromSentis(input, onMeasureSuccess, onMeasureFailure, context, modelAsset, tokens);
+            ExecuteModelFromSentis(inputTokens, onMeasureSuccess, onMeasureFailure, commandTokens, modelAsset);
         }
 
 
         // Asynchronously executes the model with a given sentence and compares it against a list of sentences      
-        private static async void ExecuteModelFromSentis(string input, Action<float[]> onMeasureSuccess, Action<string> onMeasureFailure, string[] context, ModelAsset modelAsset, string[] vocabTokens)
+        private static async void ExecuteModelFromSentis(List<int> inputTokens, Action<float[]> onMeasureSuccess, Action<string> onMeasureFailure, Dictionary<string, List<int>> commandTokens, ModelAsset modelAsset)
         {
             try
             {
@@ -69,17 +69,18 @@ namespace SentenceSimilarityUnity
                 var model = ModelLoader.Load(modelAsset);
                 _modelExecuteWorker = new Worker(model, GetBackendType());
 
-                List<int> tokens1 = GetTokens(input, vocabTokens); // Tokenize the input sentence
-                using Tensor<float> embedding1 = await GetEmbeddingAsync(tokens1); // Get embedding for the first sentence
+                using Tensor<float> embedding1 = await GetEmbeddingAsync(inputTokens); // Get embedding for the first sentence
 
-                float[] results = new float[context.Length];
-                for (int i = 0; i < context.Length; i++)
+                float[] results = new float[commandTokens.Count];
+
+                int idx = 0;
+                foreach (var token in commandTokens)
                 {
-                    List<int> tokens2 = GetTokens(context[i], vocabTokens); // Tokenize each comparison sentence
-                    using Tensor<float> embedding2 = await GetEmbeddingAsync(tokens2); // Get embedding for the comparison sentence
+                    using Tensor<float> embedding2 = await GetEmbeddingAsync(token.Value); // Get embedding for the comparison sentence
                     float accuracy = DotScore(embedding1, embedding2); // Calculate similarity score
-                    results[i] = accuracy;
+                    results[idx++] = accuracy;
                 }
+                
                 AllWorkerDispose();
 
                 onMeasureSuccess?.Invoke(results);
