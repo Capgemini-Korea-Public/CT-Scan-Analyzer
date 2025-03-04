@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.IO;
 using System;
-using System.Threading.Tasks;
 
 public class CameraCaptureSystem : MonoBehaviour
 {

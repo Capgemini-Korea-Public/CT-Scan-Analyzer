@@ -6,6 +6,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Collections;
 using SpeechToTextUnity;
+using UnityEngine.Events;
 
 public class HUDUI : MonoBehaviour
 {
@@ -34,6 +35,8 @@ public class HUDUI : MonoBehaviour
     private readonly HashSet<string> imageExtensions = new HashSet<string> { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
     private Coroutine fadeCor;
     private WaitForSeconds defaultSeconds = new WaitForSeconds(2f);
+
+    public UnityEvent OnChangedCapturedImage;
 
     private void Start()
     {
@@ -86,6 +89,8 @@ public class HUDUI : MonoBehaviour
         CameraCaptureSystem.Instance.Capture();
         string filePath = CameraCaptureSystem.Instance.CapturedImageSavePath;
         MainController.Instance.CaptureImage(await AudioConvertor.LoadTexture(filePath));
+
+        OnChangedCapturedImage?.Invoke();
     }
 
     private bool IsValidImageFormat(string filePath)
