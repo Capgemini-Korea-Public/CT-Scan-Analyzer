@@ -51,7 +51,7 @@ Performs the requested operation on the CT scan data based on the processed resu
 # Getting Started
 To use the CT-Scan-Analyzer, follow these steps:
 
-### 1. HuggingFace API Setup
+## 1. HuggingFace API Setup
 ![HuggingFace Setup](https://github.com/user-attachments/assets/f5dabc08-fc79-402b-9c64-3d868e290b9b)
 
 Follow the detailed guide to set up the HuggingFace API **`(complete up to Step 3)`**
@@ -60,7 +60,7 @@ Follow the detailed guide to set up the HuggingFace API **`(complete up to Step 
 https://github.com/huggingface/unity-api.git
 ```
 
-### 2. configure your local environment:
+## 2. configure your local environment:
 
 1. Create a folder named **.openai** in your user directory:
 - For Windows: `C:\Users\<YourUserName>\`
@@ -74,7 +74,7 @@ https://github.com/huggingface/unity-api.git
 }
 ```
 
-## Installing FFmpeg
+## 3. Installing FFmpeg
 
 This package uses FFmpeg to process audio files, so you must install FFmpeg on your computer before using the package.
 
@@ -87,13 +87,13 @@ This package uses FFmpeg to process audio files, so you must install FFmpeg on y
 5. Place `ffmpeg.exe` into the **Assets/Plugins** folder.
 
 
-### Clone the repository.
+## 4. Clone the repository.
 
-### Open the project in Unity.
+## 5. Open the project in Unity.
 
-### Ensure all necessary dependencies are installed.
+## 6. Ensure all necessary dependencies are installed.
 
-### Run the application and start interacting with CT scan data using voice commands.
+## 7. Run the application and start interacting with CT scan data using voice commands.
 
 # Contributing
 We welcome contributions to the CT-Scan-Analyzer project. Please feel free to submit issues, fork the repository, and send pull requests.
