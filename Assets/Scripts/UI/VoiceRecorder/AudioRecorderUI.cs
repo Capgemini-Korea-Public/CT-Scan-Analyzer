@@ -6,18 +6,25 @@ using System.Threading.Tasks;
 
 public class AudioRecorderUI : MonoBehaviour
 {
-    [Header("UI Elements")]
+    [Header("Button Panel")]
     public Button recordButton;
     public Button stopButton;
     public Button playButton;
+
+    [Header("Recording Duration Input")]
     public Button durationEnterButton;
-    public Button sttEnterButton;
     public TMP_InputField durationInputField;
 
+    [Header("Audio Source")]
     public AudioSource analysisSource;
     public AudioSource playbackSource;
 
-    // �ھ� ���� �ν��Ͻ�: MonoBehaviour�� �������� �ʴ� ���� C# Ŭ����
+    [Header("Info Text")]
+    public TextMeshProUGUI infoText;
+
+    [Header("Etc Elements")]
+    public Button sttEnterButton;
+
     private AudioRecorder recorderCore;
     private AudioFileManager fileManagerCore;
 
@@ -28,7 +35,6 @@ public class AudioRecorderUI : MonoBehaviour
         recorderCore = new AudioRecorder(analysisSource, playbackSource);
         fileManagerCore = new AudioFileManager();
 
-        // UI ��ư �̺�Ʈ ����
         if (recordButton != null)
             recordButton.onClick.AddListener(OnStartButtonClicked);
         if (stopButton != null)
@@ -40,11 +46,9 @@ public class AudioRecorderUI : MonoBehaviour
         if (sttEnterButton != null)
             sttEnterButton.onClick.AddListener(OnSTTEnterButtonClicked);
 
-        // �Է� �ʵ� ���� �� ���� �ð� ������Ʈ
         if (durationInputField != null)
             durationInputField.onValueChanged.AddListener(OnDurationInputChanged);
 
-        // �ھ� �̺�Ʈ ����: ���� ����/���� �� �α� �޽��� ����
         recorderCore.OnRecordingStarted += HandleRecordingStarted;
         recorderCore.OnRecordingStopped += HandleRecordingStopped;
         recorderCore.OnLog += AppendLog;
@@ -52,12 +56,10 @@ public class AudioRecorderUI : MonoBehaviour
 
     private async void OnStartButtonClicked()
     {
-        // �Էµ� ���� �ð��� ������ �ھ �ݿ�
         if (int.TryParse(durationInputField.text, out int duration))
         {
             recorderCore.SetRecordingDuration(duration);
         }
-        // ���� ���� (�񵿱� ȣ��)
         await recorderCore.StartRecordingAsync();
     }
 
@@ -99,20 +101,18 @@ public class AudioRecorderUI : MonoBehaviour
     private void HandleRecordingStarted()
     {
         AppendLog("Recording started.");
-        // UI ������Ʈ: ���� ���, ��ư ���� ���� �� �߰� ����
     }
 
     private void HandleRecordingStopped()
     {
         AppendLog("Recording stopped.");
-        // UI ������Ʈ: ���� ���, ��ư ���� ���� �� �߰� ����
     }
 
     private void AppendLog(string message)
     {
-        //logText.text = "";
-        //if (logText != null)
-        //    logText.text += message + "\n";
-        //Debug.Log(message);
+        infoText.text = "";
+        if (infoText != null)
+            infoText.text += message + "\n";
+        Debug.Log(message);
     }
 }

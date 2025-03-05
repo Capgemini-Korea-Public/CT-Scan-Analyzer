@@ -21,6 +21,13 @@ public class InsertPhotoUI : MonoBehaviour
         ToggleCheckBox();
     }
 
+    public void HideCapturedImage()
+    {
+        checkMark.gameObject.SetActive(false);
+        capturedImageBG.gameObject.SetActive(false);
+        capturedImage.gameObject.SetActive(false);
+    }
+
     private void ToggleCheckBox()
     {
         bool b = checkMark.gameObject.activeInHierarchy;

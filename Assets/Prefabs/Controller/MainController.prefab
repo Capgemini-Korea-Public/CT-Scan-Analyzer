@@ -52,8 +52,9 @@ MonoBehaviour:
   STTConvertedString: 
   LLMModelType: 1
   LLMOutputString: 
-  SentenceSimilarityModelType: 1
+  SentenceSimilarityModelType: 0
   CurCapturedImages: []
+  isImageInserted: 0
 --- !u!1 &2714345373345794232
 GameObject:
   m_ObjectHideFlags: 0
