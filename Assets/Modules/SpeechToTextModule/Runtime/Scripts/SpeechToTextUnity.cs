@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using OpenAI;
 using System.IO;
-using NUnit.Framework;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Text;
@@ -39,7 +38,6 @@ namespace SpeechToTextUnity
             var res = await openAI.CreateAudioTranscription(req);
 
             isTranscribe = false;
-            Assert.NotNull(res); //response null check
 
             Debug.Log(res);
 

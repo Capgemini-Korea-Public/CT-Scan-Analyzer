@@ -5,6 +5,7 @@ namespace SpeechToTextUnity
 {
     public static class FileSelector
     {
+        #if UNITY_EDITOR
         public static string FileSelect()
         {
             string filePath = EditorUtility.OpenFilePanel("Select File", "", "");
@@ -18,6 +19,7 @@ namespace SpeechToTextUnity
                 return null;
             }
         }
+        #endif
     }
 }
 

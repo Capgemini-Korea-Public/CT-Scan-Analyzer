@@ -9,6 +9,7 @@ public static class TextureConverter
     /// - textureCompression을 Uncompressed(압축 없음)로 설정
     /// </summary>
     /// <param name="texture">변경할 Texture2D 에셋</param>
+    #if UNITY_EDITOR
     public static void ConvertTexture(Texture2D texture)
     {
         // 에셋 경로 얻기
@@ -35,4 +36,5 @@ public static class TextureConverter
         AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
         Debug.Log("Texture 변환 완료: " + path);
     }
+    #endif
 }

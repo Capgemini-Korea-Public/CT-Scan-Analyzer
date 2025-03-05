@@ -159,7 +159,7 @@ public static partial class Ollama
     {
         if (texture == null)
             return null;
-        TextureConverter.ConvertTexture(texture);
+        //TextureConverter.ConvertTexture(texture);
         if (fullQuality)
             return Convert.ToBase64String(texture.EncodeToPNG());
         else
