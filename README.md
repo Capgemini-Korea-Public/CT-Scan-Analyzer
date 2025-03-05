@@ -91,9 +91,7 @@ This package uses FFmpeg to process audio files, so you must install FFmpeg on y
 
 ## 5. Open the project in Unity.
 
-## 6. Ensure all necessary dependencies are installed.
-
-## 7. Run the application and start interacting with CT scan data using voice commands.
+## 6. Run the application and start interacting with CT scan data using voice commands.
 
 # Contributing
 We welcome contributions to the CT-Scan-Analyzer project. Please feel free to submit issues, fork the repository, and send pull requests.
