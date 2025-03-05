@@ -5,8 +5,7 @@ CT-Scan-Analyzer is a Unity-based project that implements a command system for C
 ## Video Sample
 
 
-https://github.com/user-attachments/assets/5811ab2f-36ca-4b7c-9c90-50f79d240c21
-
+https://github.com/user-attachments/assets/3209dbfc-5014-491c-b0cf-58c4c1c0c999
 
 ## Key Features
 ### Voice Recording (VR)
