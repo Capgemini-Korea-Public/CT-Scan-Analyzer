@@ -3,13 +3,17 @@ CT-Scan-Analyzer is a Unity-based project that implements a command system for C
 
 # Project Overview
 ## Key Features
-### Audio Recording (AR)
+### Voice Recording (VR)
 
 Captures user voice commands for seamless interaction.
+
+more detail : https://github.com/Capgemini-Korea-Public/Unity-VoiceRecorder
 
 ### Speech-to-Text (STT)
 
 Converts audio input into text for further processing.
+
+more detail : https://github.com/Capgemini-Korea-Public/Unity-Speech-To-Text
 
 ### Sentence Similarity (Text Preprocessing)
 
@@ -21,9 +25,13 @@ For "analyze": Preprocesses the image data.
 
 For "rotate" and "scaleup": Structures the output as JSON, e.g., {angle: ?, dir: ?}.
 
+more detail : https://github.com/Capgemini-Korea-Public/Unity-Sentence-Similarity
+
 ### LLM Processing
 
 Utilizes a Large Language Model to execute the preprocessed commands.
+
+more detail : https://github.com/Capgemini-Korea-Public/Unity-LLM-Module
 
 ### Result Postprocessing
 
