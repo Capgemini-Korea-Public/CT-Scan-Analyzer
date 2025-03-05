@@ -51,13 +51,49 @@ Performs the requested operation on the CT scan data based on the processed resu
 # Getting Started
 To use the CT-Scan-Analyzer, follow these steps:
 
-Clone the repository.
+### 1. HuggingFace API Setup
+![HuggingFace Setup](https://github.com/user-attachments/assets/f5dabc08-fc79-402b-9c64-3d868e290b9b)
 
-Open the project in Unity.
+Follow the detailed guide to set up the HuggingFace API **`(complete up to Step 3)`**
+- **[HuggingFace API Installation Tutorial](https://thomassimonini.substack.com/p/building-a-smart-robot-ai-using-hugging)**
+```csharp
+https://github.com/huggingface/unity-api.git
+```
 
-Ensure all necessary dependencies are installed.
+### 2. configure your local environment:
 
-Run the application and start interacting with CT scan data using voice commands.
+1. Create a folder named **.openai** in your user directory:
+- For Windows: `C:\Users\<YourUserName>\`
+2. Inside the **.openai** folder, create a file named `auth.json`.
+3. In `auth.json`, enter your API credentials in the following JSON format:
+
+```json
+{
+    "api_key": "your api key name",
+    "organization": "your organization name"
+}
+```
+
+## Installing FFmpeg
+
+This package uses FFmpeg to process audio files, so you must install FFmpeg on your computer before using the package.
+
+### For Windows
+
+1. Visit the [FFmpeg Downloads page](https://ffmpeg.org/download.html).
+2. Click on **Windows** and then follow the link under **Windows EXE Files** for **Windows builds from gyan.dev**.
+3. Download the FFmpeg build, extract the archive, and locate the `ffmpeg.exe` file in the `bin` folder.
+4. In your Unity project, create a folder named **Plugins** inside the **Assets** folder.
+5. Place `ffmpeg.exe` into the **Assets/Plugins** folder.
+
+
+### Clone the repository.
+
+### Open the project in Unity.
+
+### Ensure all necessary dependencies are installed.
+
+### Run the application and start interacting with CT scan data using voice commands.
 
 # Contributing
 We welcome contributions to the CT-Scan-Analyzer project. Please feel free to submit issues, fork the repository, and send pull requests.
