@@ -22,6 +22,11 @@ public class ZoomCommand : ICommand
         try
         {
             zoomInfo = JsonExtension.DeserializeObject<ZoomInformation>(output);
+            if(string.IsNullOrEmpty(zoomInfo.cameraType))
+            {
+                zoomInfo.cameraType = "ortho";
+            }
+
             if(zoomInfo.cameraType.ToLower() == "fov")
             {
                 fovController.SmoothZoom(zoomInfo.command, zoomInfo.percent);
@@ -33,7 +38,7 @@ public class ZoomCommand : ICommand
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            Debug.LogError(e);
             throw;
         }
     }

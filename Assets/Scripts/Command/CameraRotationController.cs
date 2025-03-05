@@ -85,52 +85,58 @@ public class CameraRotationController : MonoBehaviour
     /// </summary>
     /// <param name="direction">"left", "right", "up", "down"</param>
     /// <param name="angle">회전할 각도(도). null이면 연속 회전</param>
-    public void RotateSmooth(string direction, float? angle = null)
+    public void RotateSmooth(string direction, float? angle = 60f)
     {
-        if (!angle.HasValue)
+        // direction이 null이거나 빈 문자열이면 기본값 "right"로 설정합니다.
+        if (string.IsNullOrEmpty(direction))
+            direction = "right";
+
+        //if (!angle.HasValue || Mathf.Approximately(angle.Value, 0f))
+        //{
+        //    // 연속 회전: 새 방향 명령을 currentContinuousDirection에 저장
+        //    //SetRotationCommand(direction);
+        //    //return;
+        //}
+
+
+        // 단일 회전 모드: 진행 중인 연속 회전이 있다면 중지
+        if (continuousRotationCoroutine != null)
         {
-            // 연속 회전: 새 방향 명령을 currentContinuousDirection에 저장
-            SetRotationCommand(direction);
+            StopCoroutine(continuousRotationCoroutine);
+            continuousRotationCoroutine = null;
+            currentContinuousDirection = "";
         }
-        else
+        if (isRotating) return;
+
+        float deltaAngle = angle.Value;
+        // 여기서는 실제 현재 상태를 반영하기 위해, GetCurrentYawPitch()를 사용합니다.
+        float currentYaw, currentPitch;
+        GetCurrentYawPitch(out currentYaw, out currentPitch);
+
+        float targetYaw = currentYaw;
+        float targetPitch = currentPitch;
+
+        switch (direction.ToLower())
         {
-            // 단일 회전 모드: 진행 중인 연속 회전이 있다면 중지
-            if (continuousRotationCoroutine != null)
-            {
-                StopCoroutine(continuousRotationCoroutine);
-                continuousRotationCoroutine = null;
-                currentContinuousDirection = "";
-            }
-            if (isRotating) return;
-
-            float deltaAngle = angle.Value;
-            // 여기서는 실제 현재 상태를 반영하기 위해, GetCurrentYawPitch()를 사용합니다.
-            float currentYaw, currentPitch;
-            GetCurrentYawPitch(out currentYaw, out currentPitch);
-
-            float targetYaw = currentYaw;
-            float targetPitch = currentPitch;
-
-            switch (direction.ToLower())
-            {
-                case "left":
-                    targetYaw += Mathf.Abs(deltaAngle);
-                    break;
-                case "right":
-                    targetYaw -= Mathf.Abs(deltaAngle);
-                    break;
-                case "up":
-                    targetPitch = Mathf.Clamp(currentPitch + Mathf.Abs(deltaAngle), -80f, 80f);
-                    break;
-                case "down":
-                    targetPitch = Mathf.Clamp(currentPitch - Mathf.Abs(deltaAngle), -80f, 80f);
-                    break;
-                default:
-                    Debug.LogWarning("알 수 없는 회전 명령: " + direction);
-                    return;
-            }
-            StartCoroutine(RotateCoroutine(targetYaw, targetPitch));
+            case "left":
+                targetYaw += Mathf.Abs(deltaAngle);
+                break;
+            case "right":
+                targetYaw -= Mathf.Abs(deltaAngle);
+                break;
+            case "up":
+                targetPitch = Mathf.Clamp(currentPitch + Mathf.Abs(deltaAngle), -80f, 80f);
+                break;
+            case "down":
+                targetPitch = Mathf.Clamp(currentPitch - Mathf.Abs(deltaAngle), -80f, 80f);
+                break;
+            default:
+                targetYaw -= Mathf.Abs(deltaAngle);
+                Debug.LogWarning("알 수 없는 회전 명령: " + direction);
+                return;
         }
+        StartCoroutine(RotateCoroutine(targetYaw, targetPitch));
+
     }
 
     // 현재 카메라의 실제 회전에서 yaw와 pitch를 추출하는 함수 (간단한 예시)
@@ -172,9 +178,6 @@ public class CameraRotationController : MonoBehaviour
         transform.rotation = Quaternion.LookRotation(target.position - transform.position, Vector3.up);
         isRotating = false;
     }
-
-
-
 
     IEnumerator ContinuousRotation()
     {
