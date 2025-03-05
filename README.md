@@ -23,15 +23,18 @@ more detail : https://github.com/Capgemini-Korea-Public/Unity-Speech-To-Text
 
 ### Sentence Similarity (Text Preprocessing)
 
+### Sentence Similarity (Text Preprocessing)
+
 Analyzes the STT output to determine the most similar command among "analyze," "rotate," "scaleup," and "initialize" using Sentence Similarity techniques.
 
-Prepares the appropriate prompt based on the identified command:
+Prepares the appropriate prompt based on the identified command
 
-For "analyze": Preprocesses the image data.
-
-For "rotate" and "scaleup": Structures the output as JSON, e.g., {angle: ?, dir: ?}.
+- For "**diagnose**", diagnose the image data.
+- For "**rotate**" and "**zoom**", Structures the output as JSON, e.g., {angle: ?, dir: ?}.
+- For "**reset**", reset the camera state value to the initial value.
 
 more detail : https://github.com/Capgemini-Korea-Public/Unity-Sentence-Similarity
+
 
 ### LLM Processing
 
