@@ -97,3 +97,6 @@ crashlytics-build.properties
 /Assets/StreamingAssets/undreamai*
 /Assets/VTKUnity-Activiz/Plugin/vtkOutputWindow.log
 /Assets/VTKUnity-Activiz/Plugin/vtkOutputWindow.log.meta
+
+# Ignore dev Folder
+/Assets/Dev/*
