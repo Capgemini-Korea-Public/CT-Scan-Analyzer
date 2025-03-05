@@ -1,5 +1,5 @@
 # CT-Scan-Analyzer
-CT-Scan-Analyzer is a Unity-based project that implements a command system for CT scan analysis using advanced technologies such as Audio Recording (AR), Speech-to-Text (STT), Sentence Similarity(SS), and Large Language Models (LLM). This innovative system allows users to interact with CT scan data using voice commands, providing a hands-free and efficient way to analyze medical imaging.
+CT-Scan-Analyzer is a Unity-based project that implements a command system for CT scan analysis using advanced technologies such as Vidio Recording (VR), Speech-to-Text (STT), Sentence Similarity(SS), and Large Language Models (LLM). This innovative system allows users to interact with CT scan data using voice commands, providing a hands-free and efficient way to analyze medical imaging.
 
 # Project Overview
 ## Key Features
