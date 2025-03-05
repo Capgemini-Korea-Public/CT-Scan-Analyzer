@@ -28,8 +28,7 @@ Prepares the appropriate prompt based on the identified command
 
 - For "**diagnose**", diagnose the image data.
 - For "**rotate**" and "**zoom**", Structures the output as JSON, e.g., {angle: ?, dir: ?}.
-- For "**reset**", reset the camera state value to the initial value.
-
+- 
 more detail : https://github.com/Capgemini-Korea-Public/Unity-Sentence-Similarity
 
 
@@ -41,10 +40,10 @@ more detail : https://github.com/Capgemini-Korea-Public/Unity-LLM-Module
 
 ### Result Postprocessing
 
-For "**diagnose**": Directly outputs the text result.
-
-For "**rotate**" and "scaleup": Parses the JSON output to extract command parameters.
-
+- For "**diagnose**", Directly outputs the text result.
+- For "**rotate**" and "**zoom**", Parses the JSON output to extract command parameters.
+- For "**reset**", reset the camera state value to the initial value.
+- 
 ### Command Execution
 
 Performs the requested operation on the CT scan data based on the processed results.
