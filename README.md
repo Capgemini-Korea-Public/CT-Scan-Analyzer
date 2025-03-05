@@ -41,9 +41,9 @@ more detail : https://github.com/Capgemini-Korea-Public/Unity-LLM-Module
 
 ### Result Postprocessing
 
-For "analyze": Directly outputs the text result.
+For "**diagnose**": Directly outputs the text result.
 
-For "rotate" and "scaleup": Parses the JSON output to extract command parameters.
+For "**rotate**" and "scaleup": Parses the JSON output to extract command parameters.
 
 ### Command Execution
 
