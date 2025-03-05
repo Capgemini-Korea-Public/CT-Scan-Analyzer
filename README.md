@@ -23,8 +23,6 @@ more detail : https://github.com/Capgemini-Korea-Public/Unity-Speech-To-Text
 
 ### Sentence Similarity (Text Preprocessing)
 
-### Sentence Similarity (Text Preprocessing)
-
 Analyzes the STT output to determine the most similar command among "analyze," "rotate," "scaleup," and "initialize" using Sentence Similarity techniques.
 
 Prepares the appropriate prompt based on the identified command
