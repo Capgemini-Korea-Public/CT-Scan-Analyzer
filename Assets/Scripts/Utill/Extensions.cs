@@ -16,7 +16,7 @@ public static class TextureConverter
         string path = AssetDatabase.GetAssetPath(texture);
         if (string.IsNullOrEmpty(path))
         {
-            Debug.LogError("해당 Texture2D의 에셋 경로를 찾을 수 없습니다.");
+            //Debug.LogError("해당 Texture2D의 에셋 경로를 찾을 수 없습니다.");
             return;
         }
 
@@ -24,7 +24,7 @@ public static class TextureConverter
         TextureImporter textureImporter = AssetImporter.GetAtPath(path) as TextureImporter;
         if (textureImporter == null)
         {
-            Debug.LogError("TextureImporter를 가져오지 못했습니다: " + path);
+            //Debug.LogError("TextureImporter를 가져오지 못했습니다: " + path);
             return;
         }
 
