@@ -29,11 +29,6 @@ public class LocalLibraryAdaptor : ILLMService
         Debug.Log("AI Reply Done");
     }
 
-    public Task<string> Chat(string inputText, Texture2D inputImage)
-    {
-        throw new System.NotImplementedException();
-    }
-
     public Task<string> Chat(string inputText, Texture2D[] inputImages)
     {
         throw new System.NotImplementedException();
