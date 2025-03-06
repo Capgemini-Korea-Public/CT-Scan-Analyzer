@@ -86,12 +86,28 @@ This package uses FFmpeg to process audio files, so you must install FFmpeg on y
 4. In your Unity project, create a folder named **Plugins** inside the **Assets** folder.
 5. Place `ffmpeg.exe` into the **Assets/Plugins** folder.
 
+## 4. Installing Whisper Sentis Model
 
-## 4. Clone the repository.
+To convert audio files using the Sentis model, follow these steps:
 
-## 5. Open the project in Unity.
+1. **Create a Resources Folder**  
+- In your project's **Assets** folder, create a folder named exactly `Resources`.
 
-## 6. Run the application and start interacting with CT scan data using voice commands.
+2. **Download the Models and Data**  
+- Visit [Sentis Whisper Tiny](https://huggingface.co/unity/sentis-whisper-tiny).
+- Under the **Files and versions** tab, download the four ONNX models from the `Assets/Models` folder.
+- Also, download the `vocab.json` file from the `Assets/Data` folder.
+
+3. **Place the Files**  
+- Move the `four downloaded model files` and the `vocab.json` file into your newly created `Assets/Resources` folder.
+
+Your Sentis model setup is now complete.
+
+## 5. Clone the repository.
+
+## 6. Open the project in Unity.
+
+## 7. Run the application and start interacting with CT scan data using voice commands.
 
 # Contributing
 We welcome contributions to the CT-Scan-Analyzer project. Please feel free to submit issues, fork the repository, and send pull requests.
