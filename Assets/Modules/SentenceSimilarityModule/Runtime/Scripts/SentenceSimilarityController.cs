@@ -26,9 +26,9 @@ public class SentenceSimilarityController : MonoBehaviour
     public string EnteredSentence => enteredSentence;
 
     [Header("# Measure Events")]
-    [SerializeField] public UnityEvent OnMeasureBeginEvent;
     [SerializeField] public UnityEvent<SimilarityResult> OnMeasureSuccessEvent;
-    [SerializeField] public UnityEvent OnMeasureFailEvent;
+    public event Action OnMeasureFailEvent;
+    public event Action OnMeasureBeginEvent;
 
     [Header("# Register Events")]
     [SerializeField] public UnityEvent<string> OnSentenceRegisterSuccessEvent;

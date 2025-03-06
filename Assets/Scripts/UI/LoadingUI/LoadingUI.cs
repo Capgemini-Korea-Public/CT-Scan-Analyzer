@@ -19,7 +19,9 @@ public class LoadingUI : MonoBehaviour
     private void Awake()
     {
         wait = new WaitForSeconds(delayTime);
+        SentenceSimilarityController.Instance.OnMeasureFailEvent += EndLoadingUI;
     }
+    
     public void StartLoadingUI()
     {
         isLoading = true;

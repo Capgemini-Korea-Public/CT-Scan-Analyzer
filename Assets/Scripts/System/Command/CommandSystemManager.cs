@@ -34,7 +34,7 @@ public class CommandSystemManager : MonoBehaviour
         return commandDict.TryGetValue(input, out ICommand command) ? command.GetInputFormat() : "";
     }
     
-    private const string UpdateFormat = "\nLet me know if you need anything else.";
+    private const string UpdateFormat = "\n\nLet me know if you need anything else.";
     public void OnUIUpdate(string output)
     {
         if (!string.IsNullOrEmpty(output))

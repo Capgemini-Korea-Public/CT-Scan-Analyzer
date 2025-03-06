@@ -67,6 +67,8 @@ public class HUDUI : MonoBehaviour
             textInputField.onValueChanged.AddListener(OnTextInputValChanged);
 
         CommandSystemManager.instance.onCommandUIEvent  += OnOutputChanged;
+        SentenceSimilarityController.Instance.OnMeasureFailEvent += MeasureFailed;
+        SentenceSimilarityController.Instance.OnMeasureBeginEvent += SlideOutputPanelDown;
 
         // Init With Audio Input Mode
         ToggleInputMode(false);
@@ -132,10 +134,15 @@ public class HUDUI : MonoBehaviour
         audioInput.SetActive(!isTextMode);
     }
     
-    public void OnOutputChanged(string outputString)
+    private void OnOutputChanged(string outputString)
     {
         SlideOutputPanelUp();
         outputText.text = outputString;
+    }
+    
+    private void MeasureFailed()
+    {
+        OnOutputChanged("Command analysis failed. Please try again.");
     }
 
     #region Panel
