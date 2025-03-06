@@ -3,18 +3,18 @@ using UnityEngine;
 
 public class CameraFovController : MonoBehaviour
 {
-    // Ä«¸Þ¶ó ÄÄÆ÷³ÍÆ® ÂüÁ¶ (¾ø´Ù¸é Start¿¡¼­ ÀÚµ¿À¸·Î °¡Á®¿È)
+    // Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½Ù¸ï¿½ Startï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
     public Camera cam;
 
-    [Tooltip("FOVÀÇ ÃÖ¼Ò°ª (¿¹: 10µµ)")]
+    [Tooltip("FOVï¿½ï¿½ ï¿½Ö¼Ò°ï¿½ (ï¿½ï¿½: 10ï¿½ï¿½)")]
     public float minFov = 10f;
-    [Tooltip("FOVÀÇ ÃÖ´ë°ª (¿¹: 120µµ)")]
+    [Tooltip("FOVï¿½ï¿½ ï¿½Ö´ë°ª (ï¿½ï¿½: 120ï¿½ï¿½)")]
     public float maxFov = 120f;
 
-    [Tooltip("¿¬¼Ó ÁÜ ½Ã ÃÊ´ç FOV º¯È­À² (ÆÛ¼¾Æ® ´ÜÀ§)")]
-    public float continuousZoomSpeed = 10f; // ¿¹¸¦ µé¾î 10% º¯È­
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Ê´ï¿½ FOV ï¿½ï¿½È­ï¿½ï¿½ (ï¿½Û¼ï¿½Æ® ï¿½ï¿½ï¿½ï¿½)")]
+    public float continuousZoomSpeed = 10f; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ 10% ï¿½ï¿½È­
 
-    // ÃÊ±â »óÅÂ ÀúÀå¿ë º¯¼ö
+    // ï¿½Ê±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     private float initialFov;
     private Vector3 initialPosition;
     private Quaternion initialRotation;
@@ -34,12 +34,12 @@ public class CameraFovController : MonoBehaviour
     }
 
     /// <summary>
-    /// SmoothZoom ÇÔ¼ö´Â ÁÖ¾îÁø command("zoom in" ¶Ç´Â "zoom out")¿Í percent¿¡ µû¶ó
-    /// ÇöÀç FOV¿¡¼­ ¸ñÇ¥ FOV·Î ºÎµå·´°Ô º¯È­½ÃÅµ´Ï´Ù.
-    /// percent ¸Å°³º¯¼ö°¡ »ý·«µÇ¸é ±âº»°ª 10%°¡ Àû¿ëµË´Ï´Ù.
+    /// SmoothZoom ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ï¿½ command("zoom in" ï¿½Ç´ï¿½ "zoom out")ï¿½ï¿½ percentï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    /// ï¿½ï¿½ï¿½ï¿½ FOVï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ FOVï¿½ï¿½ ï¿½Îµå·´ï¿½ï¿½ ï¿½ï¿½È­ï¿½ï¿½Åµï¿½Ï´ï¿½.
+    /// percent ï¿½Å°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¸ï¿½ ï¿½âº»ï¿½ï¿½ 10%ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ë´Ï´ï¿½.
     /// </summary>
-    /// <param name="command">"zoom in" ¶Ç´Â "zoom out"</param>
-    /// <param name="percent">º¯È­ÇÒ ÆÛ¼¾Æ® (¿¹: 30ÀÌ¸é ÇöÀç FOVÀÇ 30% º¯È­)</param>
+    /// <param name="command">"zoom in" ï¿½Ç´ï¿½ "zoom out"</param>
+    /// <param name="percent">ï¿½ï¿½È­ï¿½ï¿½ ï¿½Û¼ï¿½Æ® (ï¿½ï¿½: 30ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ FOVï¿½ï¿½ 30% ï¿½ï¿½È­)</param>
     public void SmoothZoom(string command, float percent = 10f)
     {
         if (smoothZoomCoroutine != null)
@@ -65,7 +65,7 @@ public class CameraFovController : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("SmoothZoom: ¾Ë ¼ö ¾ø´Â ¸í·É¾î - " + command);
+            Debug.LogWarning("SmoothZoom: ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½É¾ï¿½ - " + command);
             yield break;
         }
 
@@ -82,13 +82,13 @@ public class CameraFovController : MonoBehaviour
 
 
     /// <summary>
-    /// Ä«¸Þ¶óÀÇ FOV¿Í À§Ä¡, È¸ÀüÀ» ÃÊ±â »óÅÂ·Î º¹¿øÇÕ´Ï´Ù.
+    /// Ä«ï¿½Þ¶ï¿½ï¿½ï¿½ FOVï¿½ï¿½ ï¿½ï¿½Ä¡, È¸ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½ ï¿½ï¿½ï¿½Â·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
     /// </summary>
     public void ResetFovState()
     {
         cam.fieldOfView = initialFov;
         transform.position = initialPosition;
         transform.rotation = initialRotation;
-        Debug.Log("Ä«¸Þ¶ó FOV ¹× »óÅÂ°¡ ÃÊ±âÈ­µÇ¾ú½À´Ï´Ù.");
+        Debug.Log("Ä«ï¿½Þ¶ï¿½ FOV ï¿½ï¿½ ï¿½ï¿½ï¿½Â°ï¿½ ï¿½Ê±ï¿½È­ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
     }
 }

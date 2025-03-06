@@ -66,7 +66,7 @@ public class HUDUI : MonoBehaviour
         if (textInputField != null)
             textInputField.onValueChanged.AddListener(OnTextInputValChanged);
 
-        MainController.Instance.OnLLMResponseUpdated  += OnOutputChanged;
+        CommandSystemManager.instance.onCommandUIEvent  += OnOutputChanged;
 
         // Init With Audio Input Mode
         ToggleInputMode(false);
@@ -132,7 +132,7 @@ public class HUDUI : MonoBehaviour
         audioInput.SetActive(!isTextMode);
     }
     
-    private void OnOutputChanged(string outputString)
+    public void OnOutputChanged(string outputString)
     {
         SlideOutputPanelUp();
         outputText.text = outputString;

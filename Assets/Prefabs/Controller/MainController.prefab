@@ -54,6 +54,7 @@ MonoBehaviour:
   LLMOutputString: 
   SentenceSimilarityModelType: 0
   CurCapturedImages: []
+  LoadingUI: {fileID: 0}
   isImageInserted: 0
 --- !u!1 &2714345373345794232
 GameObject:

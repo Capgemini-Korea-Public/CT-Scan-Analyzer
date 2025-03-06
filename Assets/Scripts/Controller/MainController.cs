@@ -27,8 +27,6 @@ public class MainController : MonoBehaviour
     private static MainController instance;
     public static MainController Instance => instance;
 
-    public event Action<string> OnLLMResponseUpdated;
-
     [SerializeField] private bool isImageInserted;
 
     private void Awake()
@@ -80,16 +78,7 @@ public class MainController : MonoBehaviour
         ResetSelectedImage();
         CurCapturedImages.Add(image);
     }
-
-    /// <summary>
-    /// A method Execute When LLM Successfully Get Response
-    /// </summary>
-    public void OnLLMUpdated()
-    {
-        if (!string.IsNullOrEmpty(LLMOutputString))
-            OnLLMResponseUpdated?.Invoke(LLMOutputString);
-    }
-
+    
     /// <summary>
     /// A method Execute When Sentence Measure Success
     /// </summary>
@@ -113,7 +102,6 @@ public class MainController : MonoBehaviour
             ResetSelectedImage();
         }
         LoadingUI.EndLoadingUI();
-        OnLLMUpdated();
 
         CommandSystemManager.instance.ExecuteCommand(command, LLMOutputString);
     }

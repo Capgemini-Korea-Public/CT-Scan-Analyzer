@@ -35,6 +35,9 @@ public class ZoomCommand : ICommand
             {
                 orthoZoomController.AdjustOrthoZoom(zoomInfo.command, zoomInfo.percent);
             }
+            
+            string printText = $"I {zoomInfo.command} on the {zoomInfo.cameraType} camera by {zoomInfo.percent}% !";
+            CommandSystemManager.instance.OnUIUpdate(printText);
         }
         catch (Exception e)
         {

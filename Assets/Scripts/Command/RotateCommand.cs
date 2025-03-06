@@ -27,6 +27,8 @@ public class RotateCommand : ICommand
         {
             rotationInformation = JsonExtension.DeserializeObject<RotationInformation>(output);
             rotationController.RotateSmooth(rotationInformation.direction, rotationInformation.angle);
+            string printText = $"I rotated the camera {rotationInformation.angle} degrees {GetDirectionString(rotationInformation.direction)} !";
+            CommandSystemManager.instance.OnUIUpdate(printText);
         }
         catch (Exception e)
         {
@@ -35,6 +37,16 @@ public class RotateCommand : ICommand
         }
     }
 
+    private string GetDirectionString(string direction)
+    {
+        return direction.ToLower() switch {
+            "left" => "to the left",
+            "right" => "to the right",
+            "up" => "to the up",
+            "down" => "to the down",
+            _ => ""
+        };
+    }
     public string GetInputFormat()
     {
         string message = MessageFormat + JsonUtility.ToJson(rotationInformation);

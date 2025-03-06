@@ -11,7 +11,7 @@ public class DiagnoseCommand : ICommand
     }
     public void Execute(string output)
     {
-        
+        CommandSystemManager.instance.OnUIUpdate(output);
     }
     public string GetInputFormat()
     {

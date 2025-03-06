@@ -10,10 +10,10 @@ public class CameraResetCommand : ICommand
 {
     private const string MessageFormat = "\nplease convert this by only this json format. cameraReset: reset all state.";
 
-    // ÃÊ±âÈ­ÇÒ °¢ ÄÁÆ®·Ñ·¯¿¡ ´ëÇÑ ÂüÁ¶
+    // ï¿½Ê±ï¿½È­ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Æ®ï¿½Ñ·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     private CameraRotationController rotationController;
     private CameraFovController fovController;
-    private CameraOrthoZoomController orthoZoomController; // ¸¸¾à Orthographic¿ëÀÌ ÀÖ´Ù¸é
+    private CameraOrthoZoomController orthoZoomController; // ï¿½ï¿½ï¿½ï¿½ Orthographicï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ù¸ï¿½
 
     private CameraResetInformation resetInfo;
 
@@ -28,7 +28,7 @@ public class CameraResetCommand : ICommand
 
     public void Execute(string output)
     {
-        // output JSONÀº ÇÊ¿ä ¾øÀ» ¼öµµ ÀÖÁö¸¸, ¸¸¾à È®ÀåÀÌ ÇÊ¿äÇÏ¸é ¿©±â¼­ ÆÄ½ÌÇÒ ¼ö ÀÖ½À´Ï´Ù.
+        // output JSONï¿½ï¿½ ï¿½Ê¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½â¼­ ï¿½Ä½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.
         if (rotationController != null)
         {
             rotationController.ResetRotationState();
@@ -41,6 +41,9 @@ public class CameraResetCommand : ICommand
         {
             orthoZoomController.ResetCameraState();
         }
+        
+        string printText = $"The camera has been reset!";
+        CommandSystemManager.instance.OnUIUpdate(printText);
         Debug.Log("Camera reset command executed.");
     }
 

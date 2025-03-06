@@ -87,7 +87,6 @@ public class AudioRecorderUI : MonoBehaviour
     {
         await MainController.Instance.ExecuteSpeechToText(recorderCore.FileManager.CurRecordedFilePath);
         MainController.Instance.ExecuteSentenceSimilarity(MainController.Instance.STTConvertedString);
-        MainController.Instance.OnLLMUpdated();
     }
 
     private void OnDurationInputChanged(string value)

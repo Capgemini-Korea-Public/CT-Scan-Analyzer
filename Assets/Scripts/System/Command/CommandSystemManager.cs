@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -5,9 +6,9 @@ using UnityEngine;
 public class CommandSystemManager : MonoBehaviour
 {
     public static CommandSystemManager instance;
-
     private Dictionary<string, ICommand> commandDict = new Dictionary<string, ICommand>();
-    
+    public Action<string> onCommandUIEvent;
+
     private void Awake()
     {
         instance = this;
@@ -31,6 +32,13 @@ public class CommandSystemManager : MonoBehaviour
     public string GetInputFormat(string input)
     {
         return commandDict.TryGetValue(input, out ICommand command) ? command.GetInputFormat() : "";
+    }
+    
+    private const string UpdateFormat = "\nLet me know if you need anything else.";
+    public void OnUIUpdate(string output)
+    {
+        if (!string.IsNullOrEmpty(output))
+            onCommandUIEvent?.Invoke(output + UpdateFormat);
     }
 }
 
