@@ -21,6 +21,9 @@ public class MainController : MonoBehaviour
     [Header("Elements")]
     public List<Texture2D> CurCapturedImages = new List<Texture2D>();
 
+    [Header(" Loading UI Element")]
+    public LoadingUI LoadingUI;
+    
     private static MainController instance;
     public static MainController Instance => instance;
 
@@ -57,6 +60,7 @@ public class MainController : MonoBehaviour
     /// </summary>
     public void ExecuteSentenceSimilarity(string inputText)
     {
+        LoadingUI.StartLoadingUI();
         SentenceSimilarityController.Instance.MeasureSentenceAccuracy(inputText);
     }
 
@@ -108,6 +112,7 @@ public class MainController : MonoBehaviour
             LLMOutputString = await LLMModule.Instance.Chat(input, curImages);
             ResetSelectedImage();
         }
+        LoadingUI.EndLoadingUI();
         OnLLMUpdated();
 
         CommandSystemManager.instance.ExecuteCommand(command, LLMOutputString);
