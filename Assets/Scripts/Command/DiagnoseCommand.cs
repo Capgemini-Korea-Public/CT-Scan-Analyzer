@@ -8,6 +8,8 @@ public class DiagnoseCommand : ICommand
     public DiagnoseCommand()
     {
         CommandSystemManager.instance.RegisterCommand(CommandName, this);
+        CommandSystemManager.instance.RegisterCommand("analyze", this);
+        CommandSystemManager.instance.RegisterCommand("what is this picture", this);
     }
     public void Execute(string output)
     {

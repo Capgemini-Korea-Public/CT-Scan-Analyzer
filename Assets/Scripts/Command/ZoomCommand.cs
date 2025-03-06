@@ -15,6 +15,7 @@ public class ZoomCommand : ICommand
         orthoZoomController = cameraOrthoZoomController;
         zoomInfo = new ZoomInformation();
         CommandSystemManager.instance.RegisterCommand(CommandName, this);
+        CommandSystemManager.instance.RegisterCommand("scale", this);
     }
 
     public void Execute(string output)

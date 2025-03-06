@@ -18,6 +18,8 @@ public class RotateCommand : ICommand
             Debug.Log("rotation Controller is null!!");
         }
         CommandSystemManager.instance.RegisterCommand(CommandName, this);
+        CommandSystemManager.instance.RegisterCommand("Turn", this);
+        CommandSystemManager.instance.RegisterCommand("Tilt", this);
         rotationInformation = new RotationInformation();
     }
 
